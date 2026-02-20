@@ -36,9 +36,7 @@ function checkMatch(diffs) {
   return diffs.find((diff) => diff.added || diff.removed);
 }
 
-function run(
-  { code = null, config = {}, expected = undefined } = {},
-) {
+function run({ code = null, config = {}, expected = undefined } = {}) {
   const partials = {};
   for (const [file, content] of Object.entries(config.partials ?? {}))
     partials[file] = parse(content as string, false, file);
