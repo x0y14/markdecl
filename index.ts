@@ -1,7 +1,6 @@
 import Ast from './src/ast';
 import Node from './src/ast/node';
 import format from './src/formatter';
-import functions from './src/functions';
 import parser from './src/parser';
 import * as nodes from './src/schema';
 import renderers from './src/renderers';
@@ -32,10 +31,6 @@ function mergeConfig(config: Config = {}): Config {
     nodes: {
       ...nodes,
       ...config.nodes,
-    },
-    functions: {
-      ...functions,
-      ...config.functions,
     },
   };
 }
@@ -109,7 +104,6 @@ export function createElement(
 export {
   nodes,
   tags,
-  functions,
   globalAttributes,
   transforms,
   renderers,
@@ -127,7 +121,6 @@ export {
 export default class Markdoc {
   static nodes = nodes;
   static tags = tags;
-  static functions = functions;
   static globalAttributes = globalAttributes;
   static renderers = renderers;
   static transforms = transforms;

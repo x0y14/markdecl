@@ -1,17 +1,12 @@
 import type {
   AstType,
   Config,
-  Function as AstFunction,
   Scalar,
   Variable as AstVariable,
 } from '../types';
 
 export function isAst(value?: any): value is AstType {
   return !!value?.$$mdtype;
-}
-
-export function isFunction(value?: any): value is AstFunction {
-  return !!(value?.$$mdtype === 'Function');
 }
 
 export function isVariable(value?: any): value is AstVariable {

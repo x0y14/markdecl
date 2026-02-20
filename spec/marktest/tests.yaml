@@ -44,7 +44,7 @@
       test: { render: foo, attributes: { foo: { render: true } } }
   code: |
     {% test foo=[,] /%}
-  expectedError: Expected "[", "]", "{", boolean, identifier, null, number, string, variable, or whitespace but "," found.
+  expectedError: Expected "[", "]", "{", boolean, null, number, string, variable, or whitespace but "," found.
 - name: Array without commas should fail
   config:
     tags:
@@ -125,21 +125,6 @@
 
     This is a {% foo %}test{% /foo %}.
   expected: '<article><h1>Testing</h1><p>This is a <span>test</span>.</p></article>'
-# Functions
-- name: Standalone function
-  code: |
-    foo {% and(1, 2, 3) %}
-  expected: '<article><p>foo </p></article>'
-- name: Function as a tag attribute
-  config:
-    tags:
-      foo:
-        render: p
-        attributes:
-          bar: { type: Object, render: true }
-  code: |
-    {% foo bar=and(true, true, true) /%}
-  expected: '<article><p bar="true"></p></article>'
 # Conditionals
 - name: Simple conditional
   config:
@@ -183,121 +168,6 @@
     No condition is true
     {% /if %}
   expected: '<article><p>No condition is true</p></article>'
-- name: Conditional with equals
-  config:
-    variables:
-      foo: test
-  code: |
-    {% if equals($foo, "test") %}
-    test
-    {% /if %}
-  expected: '<article><p>test</p></article>'
-- name: Conditional with equals and an and function
-  config:
-    variables:
-      foo: test
-      bar: true
-  code: |
-    {% if and(equals($foo, "test"), $bar) %}
-    test
-    {% /if %}
-  expected: '<article><p>test</p></article>'
-- name: Conditional with equals and an or function
-  config:
-    variables:
-      foo: test
-      bar: true
-  code: |
-    {% if or(equals($foo, "wrong"), $bar) %}
-    test
-    {% /if %}
-  expected: '<article><p>test</p></article>'
-- name: Conditional that fails
-  config:
-    variables:
-      foo: test
-  code: |
-    {% if equals($foo, "wrong") %}
-    test
-    {% /if %}
-  expected: '<article></article>'
-
-- name: Conditional with equals and an and function that fails
-  config:
-    variables:
-      foo: test
-      bar: true
-  code: |
-    {% if and(equals($foo, "wrong"), $bar) %}
-    test
-    {% /if %}
-  expected: '<article></article>'
-
-- name: Conditional with equals and an undefined variable
-  code: |
-    {% if equals($foo.bar, "test") %}
-    test
-    {% /if %}
-  expected: '<article></article>'
-
-- name: False condition with a not statement
-  config:
-    variables:
-      foo: true
-  code: |
-    {% if not($foo) %}
-    Conditions are met
-    {% /if %}
-  expected: '<article></article>'
-
-- name: True condition with a not statement
-  config:
-    variables:
-      foo: false
-  code: |
-    {% if not($foo) %}
-    Conditions are met
-    {% /if %}
-  expected: '<article><p>Conditions are met</p></article>'
-- name: False condition with a not statement and other booleans
-  config:
-    variables:
-      foo: true
-      bar: false
-      baz: true
-  code: |
-    {% if not(and($baz, or($foo, $bar))) %}
-    Conditions are met
-    {% /if %}
-  expected: '<article></article>'
-
-- name: True condition with a not statement and other booleans
-  config:
-    variables:
-      foo: true
-      bar: false
-      baz: false
-  code: |
-    {% if not(and($baz, or($foo, $bar))) %}
-    Conditions are met
-    {% /if %}
-  expected: '<article><p>Conditions are met</p></article>'
-- name: Condition with multiple variables
-  config:
-    variables:
-      foo: true
-      bar: true
-  code: |
-    {% if and($foo, $bar) %}
-    Conditions are met
-    {% /if %}
-  expected: '<article><p>Conditions are met</p></article>'
-- name: Using the default function
-  code: |
-    {% if default($foo, true) %}
-    Conditions are met
-    {% /if %}
-  expected: '<article><p>Conditions are met</p></article>'
 - name: Rendering HTML content
   code: |
     This is a test
@@ -794,14 +664,6 @@
     {% if $baz %}
     Nope
     {% /if %}
-
-    {% if not("") %}
-    Nope
-    {% /if %}
-
-    {% if and($foo, $bar) %}
-    Nope
-    {% /if %}
   expected: '<article><p>This is a test</p></article>'
 - name: Truthy things are not false
   config:
@@ -821,15 +683,7 @@
     {% if $baz %}
     baz
     {% /if %}
-
-    {% if or(false, $foo) %}
-    zero
-    {% /if %}
-
-    {% if and($foo, $bar, $baz) %}
-    and
-    {% /if %}
-  expected: '<article><p>foo</p><p>bar</p><p>baz</p><p>zero</p><p>and</p></article>'
+  expected: '<article><p>foo</p><p>bar</p><p>baz</p></article>'
 - name: Strikethroughs
   code: '~~Strike~~'
   expected: '<article><p><s>Strike</s></p></article>'

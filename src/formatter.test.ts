@@ -29,7 +29,7 @@ Markdoc is open-source—check out it's [source](http://github.com/markdoc/markd
 Code!
 \`\`\`
 
-## How is {% markdoc("test", 1) %} different? {% .classname %}
+## How is Markdoc different? {% .classname %}
 
 foo\\
 baz
@@ -69,7 +69,7 @@ Markdoc is open-source—check out it's [source](http://github.com/markdoc/markd
 Code!
 \`\`\`
 
-## How is {% markdoc("test", 1) %} different? {% .classname %}
+## How is Markdoc different? {% .classname %}
 
 foo\\
 baz
@@ -212,16 +212,6 @@ paragraph 2
     check(source, expected);
   });
 
-  it('attribute edge cases', () => {
-    const source = `{% key id=$user.name class=default($y, "test") %}Child{% /key %}`;
-    const expected = `
-{% key id=$user.name class=default($y, "test") %}Child{% /key %}
-`;
-
-    check(source, expected);
-    stable(expected);
-  });
-
   it('variables', () => {
     const source = `
 {% tag "complex primary" /%}
@@ -245,19 +235,6 @@ X
 
     check(source, expected);
     stable(expected);
-  });
-
-  it('functions', () => {
-    const source = `
-{% markdoc("test", 1) %}
-{% key x=default($x, 1) /%}
-`;
-    const expected = `{% markdoc("test", 1) %}
-{% key x=default($x, 1) /%}
-`;
-
-    check(source, expected);
-    stable(expected, expected);
   });
 
   it('tags', () => {

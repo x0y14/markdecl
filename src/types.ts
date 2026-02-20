@@ -1,16 +1,14 @@
-import type Func from './ast/function';
 import type Node from './ast/node';
 import type Var from './ast/variable';
 import type Tag from './tag';
 
 export type { Node, Tag };
-export declare type Function = Func;
 export declare type Variable = Var;
 
 export type MaybePromise<T> = T | Promise<T>;
 
 export interface AstType {
-  readonly $$mdtype: 'Function' | 'Node' | 'Variable';
+  readonly $$mdtype: 'Node' | 'Variable';
   resolve(config: Config): any;
 }
 
@@ -26,21 +24,12 @@ export type ConfigType<R = string> = Partial<{
   nodes: Partial<Record<NodeType, Schema<ConfigType, R>>>;
   tags: Record<string, Schema>;
   variables: Record<string, any>;
-  functions: Record<string, ConfigFunction>;
   partials: Record<string, any>;
   validation?: {
     parents?: Node[];
-    validateFunctions?: boolean;
     environment?: string;
   };
 }>;
-
-export type ConfigFunction = {
-  returns?: ValidationType | ValidationType[];
-  parameters?: Record<string, SchemaAttribute>;
-  transform?(parameters: Record<string, any>, config: Config): any;
-  validate?(fn: Func, config: Config): ValidationError[];
-};
 
 export interface CustomAttributeTypeInterface {
   transform?(value: any, config: Config): Scalar;

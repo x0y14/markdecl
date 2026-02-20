@@ -1,6 +1,6 @@
 import Ast from './ast';
 import { OPEN, CLOSE, isIdentifier } from './utils';
-import type { AttributeValue, Function, Node, Value, Variable } from './types';
+import type { AttributeValue, Node, Value, Variable } from './types';
 
 type Options = {
   allowIndentation?: boolean;
@@ -112,13 +112,6 @@ function* formatVariable(v: Variable) {
       return `["${p}"]`;
     })
     .join('');
-}
-
-function* formatFunction(f: Function) {
-  yield f.name;
-  yield '(';
-  yield Object.values(f.parameters).map(formatScalar).join(SEP);
-  yield ')';
 }
 
 function* trimStart(g: Generator<string>) {
@@ -480,10 +473,6 @@ function* formatValue(
         break;
       }
       switch (v.$$mdtype) {
-        case 'Function': {
-          yield* formatFunction(v as Function);
-          break;
-        }
         case 'Node':
           yield* formatNode(v as Node, o);
           break;

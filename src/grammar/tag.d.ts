@@ -1,10 +1,8 @@
 import type AstVariable from '../ast/variable';
-import type AstFunction from '../ast/function';
 import type Token from 'markdown-it/lib/token';
 
 type astTypes = {
   Variable?: typeof AstVariable;
-  Function?: typeof AstFunction;
 };
 
 export function parse(input: string, astTypes?: astTypes): Token;

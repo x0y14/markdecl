@@ -1,6 +1,5 @@
 import { parse, SyntaxError } from './grammar/tag';
 import Variable from './ast/variable';
-import Function from './ast/function';
 
 import type Token from 'markdown-it/lib/token';
 
@@ -53,7 +52,7 @@ export function findTagEnd(content: string, start = 0) {
 
 function parseTag(content: string, line: number, contentStart: number) {
   try {
-    return parse(content, { Variable, Function });
+    return parse(content, { Variable });
   } catch (error) {
     if (!(error instanceof SyntaxError)) throw error;
     const {

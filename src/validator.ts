@@ -4,7 +4,6 @@ import { isPromise } from './utils';
 
 import type {
   Node,
-  Function,
   Config,
   SchemaAttribute,
   ValidationError,
@@ -29,15 +28,6 @@ export function validateType(
 ): boolean | ValidationError[] {
   if (!type) return true;
 
-  if (Ast.isFunction(value) && config.validation?.validateFunctions) {
-    const schema = config.functions?.[value.name];
-    return !schema?.returns
-      ? true
-      : Array.isArray(schema.returns)
-      ? schema.returns.find((t) => t === type) !== undefined
-      : schema.returns === type;
-  }
-
   if (Ast.isAst(value)) return true;
 
   if (Array.isArray(type))
@@ -61,65 +51,6 @@ function typeToString(type: TypeParam): string {
   if (Array.isArray(type)) return type.map(typeToString).join(' | ');
 
   return type.name;
-}
-
-function validateFunction(fn: Function, config: Config): ValidationError[] {
-  const schema = config.functions?.[fn.name];
-  const errors: ValidationError[] = [];
-
-  if (!schema)
-    return [
-      {
-        id: 'function-undefined',
-        level: 'critical',
-        message: `Undefined function: '${fn.name}'`,
-      },
-    ];
-
-  if (schema.validate) errors.push(...schema.validate(fn, config));
-
-  if (schema.parameters) {
-    for (const [key, value] of Object.entries(fn.parameters)) {
-      const param = schema.parameters?.[key];
-
-      if (!param) {
-        errors.push({
-          id: 'parameter-undefined',
-          level: 'error',
-          message: `Invalid parameter: '${key}'`,
-        });
-
-        continue;
-      }
-
-      if (Ast.isAst(value) && !Ast.isFunction(value)) continue;
-
-      if (param.type) {
-        const valid = validateType(param.type, value, config, key);
-        if (valid === false) {
-          errors.push({
-            id: 'parameter-type-invalid',
-            level: 'error',
-            message: `Parameter '${key}' of '${
-              fn.name
-            }' must be type of '${typeToString(param.type)}'`,
-          });
-        } else if (Array.isArray(valid)) {
-          errors.push(...valid);
-        }
-      }
-    }
-  }
-
-  for (const [key, { required }] of Object.entries(schema.parameters ?? {}))
-    if (required && fn.parameters[key] === undefined)
-      errors.push({
-        id: 'parameter-missing-required',
-        level: 'error',
-        message: `Missing required parameter: '${key}'`,
-      });
-
-  return errors;
 }
 
 function displayMatches(matches: any[], n: number) {
@@ -191,9 +122,7 @@ export default function validator(node: Node, config: Config) {
     let { type, matches, errorLevel } = attrib;
 
     if (Ast.isAst(value)) {
-      if (Ast.isFunction(value) && config.validation?.validateFunctions)
-        errors.push(...validateFunction(value, config));
-      else if (Ast.isVariable(value) && config.variables) {
+      if (Ast.isVariable(value) && config.variables) {
         let missing = false;
         let variables = config.variables;
 

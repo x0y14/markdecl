@@ -1,13 +1,13 @@
 {
 
-const {Variable, Function} = options;
+const {Variable} = options;
 
 }
 
 Top = TopLevelValue / Annotation / TagOpen / TagClose
 
 TopLevelValue =
-  variable:(Variable / Function) {
+  variable:(Variable) {
     return {type: 'variable', meta: {variable}}
   }
 
@@ -71,30 +71,6 @@ TagAttribute =
   	return {type: 'attribute', name, value};
   }
 
-Function =
-  name:Identifier '(' _*
-  params:(
-    head:FunctionParameter?
-    tail:FunctionParameterTail* { return head ? [head, ...tail] : []; }
-  )?
-  ')' {
-    let parameters = {};
-    for (let [index, {name, value}] of params.entries())
-      parameters[name || index] = value;
-    return new Function(name, parameters);
-  }
-
-FunctionParameter =
-  name:(
-    name:Identifier '=' { return name; }
-  )?
-  value:Value {
-    return {name, value};
-  }
-
-FunctionParameterTail =
-  _* ',' _* value:FunctionParameter { return value; }
-
 TrailingComma = (_*',')?
 
 Variable 'variable' =
@@ -114,7 +90,7 @@ Value =
   ValueNull / ValueBoolean /
   ValueString / ValueNumber /
   ValueArray / ValueHash /
-  Function / Variable 
+  Variable
 
 ValueNull 'null' =
   'null' { return null; }

@@ -1,7 +1,6 @@
 import { findTagEnd, parseTags } from '../../utils';
 import { parse, SyntaxError } from '../../grammar/tag';
 import Variable from '../../ast/variable';
-import Function from '../../ast/function';
 
 import type { AttributeValue } from '../../types';
 import type MarkdownIt from 'markdown-it/lib';
@@ -18,7 +17,7 @@ function createToken(
   contentStart?: number
 ): Token {
   try {
-    const { type, meta, nesting = 0 } = parse(content, { Variable, Function });
+    const { type, meta, nesting = 0 } = parse(content, { Variable });
     const token = state.push(type, '', nesting);
     token.info = content;
     token.meta = meta;
@@ -104,7 +103,7 @@ function core(state: StateCore) {
       const content = token.info.slice(start + OPEN.length, end);
 
       try {
-        const { meta } = parse(content.trim(), { Variable, Function });
+        const { meta } = parse(content.trim(), { Variable });
         token.meta = meta;
       } catch (error) {
         if (!(error instanceof SyntaxError)) throw error;
