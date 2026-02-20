@@ -1,10 +1,9 @@
 import { promises as fs } from 'fs';
 import { resolve } from 'path';
-import { diffJson, diffChars } from 'diff';
+import { diffChars } from 'diff';
 import yaml from 'yaml-js';
 
 import markdoc from '../../index';
-import React from './react-shim';
 
 class Loader extends yaml.loader.Loader {
   construct_mapping(node) {
@@ -33,33 +32,18 @@ function stripLines(object) {
   return JSON.parse(JSON.stringify(object, removeLines));
 }
 
-function render(code, config, dynamic) {
-  const partials = {};
-  for (const [file, content] of Object.entries(config.partials ?? {}))
-    partials[file] = parse(content as string, false, file);
-
-  const { react, reactStatic } = markdoc.renderers;
-  const transformed = markdoc.transform(code, { ...config, partials });
-  return dynamic ? react(transformed, React) : eval(reactStatic(transformed));
-}
-
 function checkMatch(diffs) {
   return diffs.find((diff) => diff.added || diff.removed);
 }
 
-function run(
-  { code = null, renderer = 'react', config = {}, expected = undefined } = {},
-  dynamic
-) {
-  if (renderer === 'html') {
-    const transformed = markdoc.transform(code, config);
-    const output = markdoc.renderers.html(transformed);
-    const diff = diffChars((expected || '').trim(), (output || '').trim());
-    return checkMatch(diff) ? diff : false;
-  }
+function run({ code = null, config = {}, expected = undefined } = {}) {
+  const partials = {};
+  for (const [file, content] of Object.entries(config.partials ?? {}))
+    partials[file] = parse(content as string, false, file);
 
-  const output = render(code, config, dynamic) || {};
-  const diff = diffJson(expected || {}, output.children || []);
+  const transformed = markdoc.transform(code, { ...config, partials });
+  const output = markdoc.renderers.html(transformed);
+  const diff = diffChars((expected || '').trim(), (output || '').trim());
   return checkMatch(diff) ? diff : false;
 }
 
@@ -125,7 +109,7 @@ function formatValidation(filename, test, validation) {
       if (validation.length && test.validation != false)
         console.log(formatValidation(path, test, validation));
 
-      result = run({ ...stripLines(test), code }, true);
+      result = run({ ...stripLines(test), code });
     }
 
     if (!result) continue;

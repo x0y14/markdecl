@@ -13,4 +13,3 @@ const shared = {
 
 buildSync({ ...shared, format: 'cjs' });
 buildSync({ ...shared, outExtension: { '.js': '.mjs' } });
-buildSync({ ...shared, entryPoints: ['src/renderers/react/react.ts'] });
