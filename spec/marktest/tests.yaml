@@ -1,65 +1,27 @@
 - name: Heading with an ID
   code: |
     # This is a test {% #asdf %}
-  expected:
-    - tag: h1
-      attributes:
-        id: asdf
-      children:
-        - 'This is a test '
-
+  expected: '<article><h1 id="asdf">This is a test </h1></article>'
 - name: Ordered list
   code: |
     1. foo
     2. bar
     3. baz
-  expected:
-    - tag: ol
-      children:
-        - tag: li
-          children: [foo]
-        - tag: li
-          children: [bar]
-        - tag: li
-          children: [baz]
-
+  expected: '<article><ol><li>foo</li><li>bar</li><li>baz</li></ol></article>'
 - name: Ordered list with start
   code: |
     2. foo
     3. bar
     4. baz
-  expected:
-    - tag: ol
-      attributes:
-        start: 2
-      children:
-        - tag: li
-          children: [foo]
-        - tag: li
-          children: [bar]
-        - tag: li
-          children: [baz]
-
+  expected: '<article><ol start="2"><li>foo</li><li>bar</li><li>baz</li></ol></article>'
 - name: Heading with a class
   code: |
     # This is a test {% .asdf %}
-  expected:
-    - tag: h1
-      attributes:
-        className: asdf
-      children:
-        - 'This is a test '
-
+  expected: '<article><h1 class="asdf">This is a test </h1></article>'
 - name: Heading with multiple classes
   code: |
     # This is a test {% .foo .bar %}
-  expected:
-    - tag: h1
-      attributes:
-        className: foo bar
-      children:
-        - 'This is a test '
-
+  expected: '<article><h1 class="foo bar">This is a test </h1></article>'
 - name: Tag with hash and array
   config:
     tags:
@@ -68,13 +30,7 @@
     {% test foo={bar: [1, 2, 3]} %}
     This is a test
     {% /test %}
-  expected:
-    - tag: foo
-      attributes:
-        foo: { bar: [1, 2, 3] }
-      children:
-        - tag: p
-          children: [This is a test]
+  expected: '<article><foo foo="[object Object]"><p>This is a test</p></foo></article>'
 - name: Empty hash with comma fails
   config:
     tags:
@@ -102,69 +58,46 @@
       test: { render: foo, attributes: { foo: { render: true } } }
   code: |
     {% test foo={i: 1, j: 2, k: 3,} /%}
-  expected:
-    - tag: foo
-      attributes:
-        foo: { i: 1, j: 2, k: 3 }
+  expected: '<article><foo foo="[object Object]"></foo></article>'
 - name: Array with trailing comma
   config:
     tags:
       test: { render: foo, attributes: { foo: { render: true } } }
   code: |
     {% test foo=[1, 2 , 3, ] /%}
-  expected:
-    - tag: foo
-      attributes:
-        foo: [1, 2, 3]
-
+  expected: '<article><foo foo="1,2,3"></foo></article>'
 - name: Self-closing tag
   config:
     tags:
       test: { render: foo }
   code: |
     {% test /%}
-  expected:
-    - tag: foo
-
+  expected: '<article><foo></foo></article>'
 - name: Undefined tag
   code: |
     {% test %}
     This is a test
     {% /test %}
   validation: false
-  expected:
-    - tag: p
-      children: [This is a test]
-
+  expected: '<article><p>This is a test</p></article>'
 - name: Self-closing tag
   code: |
     {% partial file="foo" %}
     bar
     {% /partial %}
   validation: false
-  expected: [null]
+  expected: '<article></article>'
 
 - name: Content with inline code text
   code: |
     This is a `test`
-  expected:
-    - tag: p
-      children:
-        - 'This is a '
-        - tag: code
-          children:
-            - test
-
+  expected: '<article><p>This is a <code>test</code></p></article>'
 - name: Fenced code block with an annotation
   code: |
     ```ruby {% #test %}
     example
     ```
-  expected:
-    - tag: pre
-      attributes: { id: 'test', 'data-language': 'ruby' }
-      children: ["example\n"]
-
+  expected: "<article><pre id=\"test\" data-language=\"ruby\">example\n</pre></article>"
 - name: Frontmatter
   code: |
     ---
@@ -174,25 +107,14 @@
     # Example
 
     This is a test
-  expected:
-    - tag: h1
-      children: [Example]
-    - tag: p
-      children:
-        - This is a test
-
+  expected: '<article><h1>Example</h1><p>This is a test</p></article>'
 - name: Inline variable
   config:
     variables:
       foo: 10
   code: |
     This is a test: {% $foo %}
-  expected:
-    - tag: p
-      children:
-        - 'This is a test: '
-        - 10
-
+  expected: '<article><p>This is a test: 10</p></article>'
 - name: Inline tag
   config:
     tags:
@@ -202,26 +124,12 @@
     # Testing
 
     This is a {% foo %}test{% /foo %}.
-  expected:
-    - tag: h1
-      children: [Testing]
-    - tag: p
-      children:
-        - 'This is a '
-        - tag: span
-          children: [test]
-        - '.'
-
+  expected: '<article><h1>Testing</h1><p>This is a <span>test</span>.</p></article>'
 # Functions
 - name: Standalone function
   code: |
     foo {% and(1, 2, 3) %}
-  expected:
-    - tag: p
-      children:
-        - 'foo '
-        - true
-
+  expected: '<article><p>foo </p></article>'
 - name: Function as a tag attribute
   config:
     tags:
@@ -231,11 +139,7 @@
           bar: { type: Object, render: true }
   code: |
     {% foo bar=and(true, true, true) /%}
-  expected:
-    - tag: p
-      attributes:
-        bar: true
-
+  expected: '<article><p bar="true"></p></article>'
 # Conditionals
 - name: Simple conditional
   config:
@@ -245,14 +149,14 @@
     {% if $foo %}
     This is a test
     {% /if %}
-  expected: []
+  expected: '<article></article>'
 
 - name: Simple conditional with non-existent variable
   code: |
     {% if $foo %}
     This is a test
     {% /if %}
-  expected: []
+  expected: '<article></article>'
 
 - name: Conditional with else clause
   config:
@@ -264,11 +168,7 @@
     {% else /%}
     Condition is false
     {% /if %}
-  expected:
-    - tag: p
-      children:
-        - Condition is false
-
+  expected: '<article><p>Condition is false</p></article>'
 - name: Conditional with multiple else clauses
   config:
     variables:
@@ -282,11 +182,7 @@
     {% else /%}
     No condition is true
     {% /if %}
-  expected:
-    - tag: p
-      children:
-        - No condition is true
-
+  expected: '<article><p>No condition is true</p></article>'
 - name: Conditional with equals
   config:
     variables:
@@ -295,10 +191,7 @@
     {% if equals($foo, "test") %}
     test
     {% /if %}
-  expected:
-    - tag: p
-      children: [test]
-
+  expected: '<article><p>test</p></article>'
 - name: Conditional with equals and an and function
   config:
     variables:
@@ -308,10 +201,7 @@
     {% if and(equals($foo, "test"), $bar) %}
     test
     {% /if %}
-  expected:
-    - tag: p
-      children: [test]
-
+  expected: '<article><p>test</p></article>'
 - name: Conditional with equals and an or function
   config:
     variables:
@@ -321,10 +211,7 @@
     {% if or(equals($foo, "wrong"), $bar) %}
     test
     {% /if %}
-  expected:
-    - tag: p
-      children: [test]
-
+  expected: '<article><p>test</p></article>'
 - name: Conditional that fails
   config:
     variables:
@@ -333,7 +220,7 @@
     {% if equals($foo, "wrong") %}
     test
     {% /if %}
-  expected: []
+  expected: '<article></article>'
 
 - name: Conditional with equals and an and function that fails
   config:
@@ -344,14 +231,14 @@
     {% if and(equals($foo, "wrong"), $bar) %}
     test
     {% /if %}
-  expected: []
+  expected: '<article></article>'
 
 - name: Conditional with equals and an undefined variable
   code: |
     {% if equals($foo.bar, "test") %}
     test
     {% /if %}
-  expected: []
+  expected: '<article></article>'
 
 - name: False condition with a not statement
   config:
@@ -361,7 +248,7 @@
     {% if not($foo) %}
     Conditions are met
     {% /if %}
-  expected: []
+  expected: '<article></article>'
 
 - name: True condition with a not statement
   config:
@@ -371,11 +258,7 @@
     {% if not($foo) %}
     Conditions are met
     {% /if %}
-  expected:
-    - tag: p
-      children:
-        - Conditions are met
-
+  expected: '<article><p>Conditions are met</p></article>'
 - name: False condition with a not statement and other booleans
   config:
     variables:
@@ -386,7 +269,7 @@
     {% if not(and($baz, or($foo, $bar))) %}
     Conditions are met
     {% /if %}
-  expected: []
+  expected: '<article></article>'
 
 - name: True condition with a not statement and other booleans
   config:
@@ -398,11 +281,7 @@
     {% if not(and($baz, or($foo, $bar))) %}
     Conditions are met
     {% /if %}
-  expected:
-    - tag: p
-      children:
-        - Conditions are met
-
+  expected: '<article><p>Conditions are met</p></article>'
 - name: Condition with multiple variables
   config:
     variables:
@@ -412,29 +291,19 @@
     {% if and($foo, $bar) %}
     Conditions are met
     {% /if %}
-  expected:
-    - tag: p
-      children:
-        - Conditions are met
-
+  expected: '<article><p>Conditions are met</p></article>'
 - name: Using the default function
   code: |
     {% if default($foo, true) %}
     Conditions are met
     {% /if %}
-  expected:
-    - tag: p
-      children:
-        - Conditions are met
-
+  expected: '<article><p>Conditions are met</p></article>'
 - name: Rendering HTML content
-  renderer: html
   code: |
     This is a test
   expected: '<article><p>This is a test</p></article>'
 
 - name: Rendering HTML with an array attribute
-  renderer: html
   config:
     tags:
       test:
@@ -445,29 +314,18 @@
     {% test foo=[1,2,3] %}
     This is a test
     {% /test %}
-  expected: |
-    <article><test foo="1,2,3"><p>This is a test</p></test></article>
-
+  expected: '<article><test foo="1,2,3"><p>This is a test</p></test></article>'
 - name: Rendering HTML with a class name
-  renderer: html
   code: |
     # This is a test {% .foo .bar %}
-  expected: |
-    <article><h1 class="foo bar">This is a test </h1></article>
-
+  expected: '<article><h1 class="foo bar">This is a test </h1></article>'
 - name: Ignoring tags in fenced code blocks
   code: |
     ```javascript {% process=false %}
     foo
     {% bar %}
     ```
-  expected:
-    - tag: pre
-      attributes:
-        data-language: javascript
-      children:
-        - "foo\n{% bar %}\n"
-
+  expected: "<article><pre data-language=\"javascript\">foo\n{% bar %}\n</pre></article>"
 - name: Using a backtick in a fenced code block string attribute
   config:
     nodes:
@@ -492,14 +350,7 @@
     ~~~yaml {% title="this is a `test`" %}
     example
     ~~~
-  expected:
-    - tag: pre
-      attributes:
-        data-language: yaml
-        title: 'this is a `test`'
-      children:
-        - "example\n"
-
+  expected: "<article><pre data-language=\"yaml\" title=\"this is a `test`\">example\n</pre></article>"
 - name: Conditional and variable in code example
   config:
     variables:
@@ -513,17 +364,7 @@
     {% /if %}
     test
     ```
-  expected:
-    - tag: pre
-      attributes:
-        data-language: javascript
-      children:
-        - testing
-        - "\nconsole.log('This is a test: "
-        - 'bar'
-        - "');"
-        - "\ntest\n"
-
+  expected: "<article><pre data-language=\"javascript\">testing\nconsole.log('This is a test: bar');\ntest\n</pre></article>"
 - name: Conditional and variable in code example with indentation
   config:
     variables:
@@ -539,17 +380,7 @@
       return;
     }
     ```
-  expected:
-    - tag: pre
-      attributes:
-        data-language: javascript
-      children:
-        - "function test() {\n  testing();"
-        - "\n  console.log('This is a test: "
-        - 'bar'
-        - "');"
-        - "\n  return;\n}\n"
-
+  expected: "<article><pre data-language=\"javascript\">function test() {\n  testing();\n  console.log('This is a test: bar');\n  return;\n}\n</pre></article>"
 - name: Conditional and variable in code example
   config:
     variables:
@@ -563,14 +394,7 @@
     {% /if %}
     test
     ```
-  expected:
-    - tag: pre
-      attributes:
-        data-language: javascript
-      children:
-        - testing
-        - "\ntest\n"
-
+  expected: "<article><pre data-language=\"javascript\">testing\ntest\n</pre></article>"
 - name: Tag after a comment in a code example
   config:
     tags:
@@ -582,13 +406,7 @@
     {% test /%}
     test
     ```
-  expected:
-    - tag: pre
-      children:
-        - "# Testing\n"
-        - tag: test
-        - "\ntest\n"
-
+  expected: "<article><pre># Testing\n<test></test>\ntest\n</pre></article>"
 - name: Multiple sequential tags in a code example
   config:
     tags:
@@ -601,16 +419,7 @@
 
     {% test /%}
     ```
-  expected:
-    - tag: pre
-      children:
-        - tag: test
-        - "\n"
-        - tag: test
-        - "\n"
-        - tag: test
-        - "\n"
-
+  expected: "<article><pre><test></test>\n<test></test>\n<test></test>\n</pre></article>"
 - name: Conditional and variable in the same line in a code example
   config:
     variables:
@@ -620,17 +429,7 @@
     ```javascript {% process=true %}
     testing {% $foo %} test{% if $baz %}example{% /if %} another test
     ```
-  expected:
-    - tag: pre
-      attributes:
-        data-language: javascript
-      children:
-        - 'testing '
-        - 'bar'
-        - ' test'
-        - 'example'
-        - " another test\n"
-
+  expected: "<article><pre data-language=\"javascript\">testing bar testexample another test\n</pre></article>"
 - name: Arbitrary tag in a code example
   config:
     tags:
@@ -642,19 +441,7 @@
     This is a test
     {% /test %}
     ```
-  expected:
-    - tag: pre
-      attributes:
-        data-language: javascript
-      children:
-        - testing
-        - tag: foo
-          attributes:
-            foo: bar
-          children:
-            - "\nThis is a test"
-        - "\n"
-
+  expected: "<article><pre data-language=\"javascript\">testing<foo foo=\"bar\">\nThis is a test</foo>\n</pre></article>"
 - name: Nested variable inside of a tag in a code example
   config:
     tags:
@@ -666,27 +453,12 @@
     ```javascript {% process=true %}
     var stripe = Stripe('{% token %}{% $foo %}{% /token %}');
     ```
-  expected:
-    - tag: pre
-      attributes:
-        data-language: javascript
-      children:
-        - "var stripe = Stripe('"
-        - tag: token
-          children: [bar]
-        - "');\n"
-
+  expected: "<article><pre data-language=\"javascript\">var stripe = Stripe('<token>bar</token>');\n</pre></article>"
 - name: Handling for softbreaks
   code: |
     this is a test
     with softbreaks
-  expected:
-    - tag: p
-      children:
-        - this is a test
-        - ' '
-        - with softbreaks
-
+  expected: '<article><p>this is a test with softbreaks</p></article>'
 - name: Nested variable access with a string
   config:
     variables:
@@ -694,21 +466,12 @@
         this is a test: bar
   code: |
     this is a test: {% $foo["this is a test"] %}
-  expected:
-    - tag: p
-      children:
-        - 'this is a test: '
-        - bar
-
+  expected: '<article><p>this is a test: bar</p></article>'
 - name: Disabled setext heading
   code: |
     Testing
     -------
-  expected:
-    - tag: p
-      children: [Testing]
-    - tag: hr
-
+  expected: '<article><p>Testing</p><hr></article>'
 - name: Advanced table format
   code: |
     {% table %}
@@ -724,42 +487,7 @@
     * Test 3 - 2
     * Test 3 - 3
     {% /table %}
-  expected:
-    - tag: table
-      children:
-        - tag: thead
-          children:
-            - tag: tr
-              children:
-                - tag: th
-                  attributes:
-                    width: 20%
-                  children: ['Test 1 - 1 ']
-                - tag: th
-                  children: [Test 1 - 2]
-                - tag: th
-                  children: [Test 1 - 3]
-        - tag: tbody
-          children:
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 2 - 1]
-                - tag: td
-                  children: ['Test 2 - 2 ']
-                  attributes:
-                    colSpan: 2
-                - tag: td
-                  children: [Test 2 - 3]
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 3 - 1]
-                - tag: td
-                  children: [Test 3 - 2]
-                - tag: td
-                  children: [Test 3 - 3]
-
+  expected: '<article><table><thead><tr><th width="20%">Test 1 - 1 </th><th>Test 1 - 2</th><th>Test 1 - 3</th></tr></thead><tbody><tr><td>Test 2 - 1</td><td colspan="2">Test 2 - 2 </td><td>Test 2 - 3</td></tr><tr><td>Test 3 - 1</td><td>Test 3 - 2</td><td>Test 3 - 3</td></tr></tbody></table></article>'
 - name: Advanced table without header
   code: |
     {% table %}
@@ -767,19 +495,7 @@
     * foo
     * bar
     {% /table %}
-  expected:
-    - tag: table
-      children:
-        - tag: thead
-        - tag: tbody
-          children:
-            - tag: tr
-              children:
-                - tag: td
-                  children: [foo]
-                - tag: td
-                  children: [bar]
-
+  expected: '<article><table><thead></thead><tbody><tr><td>foo</td><td>bar</td></tr></tbody></table></article>'
 - name: Advanced table with conditional row
   config:
     variables:
@@ -803,30 +519,7 @@
     * Test 3 - 3
     {% /if %}
     {% /table %}
-  expected:
-    - tag: table
-      children:
-        - tag: thead
-          children:
-            - tag: tr
-              children:
-                - tag: th
-                  children: ['Test 1 - 1']
-                - tag: th
-                  children: [Test 1 - 2]
-                - tag: th
-                  children: [Test 1 - 3]
-        - tag: tbody
-          children:
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 3 - 1]
-                - tag: td
-                  children: [Test 3 - 2]
-                - tag: td
-                  children: [Test 3 - 3]
-
+  expected: '<article><table><thead><tr><th>Test 1 - 1</th><th>Test 1 - 2</th><th>Test 1 - 3</th></tr></thead><tbody><tr><td>Test 3 - 1</td><td>Test 3 - 2</td><td>Test 3 - 3</td></tr></tbody></table></article>'
 - name: Advanced table with multiple conditional rows
   config:
     variables:
@@ -851,46 +544,7 @@
     * Test 4 - 2
     * Test 4 - 3
     {% /table %}
-  expected:
-    - tag: table
-      children:
-        - tag: thead
-          children:
-            - tag: tr
-              children:
-                - tag: th
-                  children: [Test 1 - 1]
-                - tag: th
-                  children: [Test 1 - 2]
-                - tag: th
-                  children: [Test 1 - 3]
-        - tag: tbody
-          children:
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 2 - 1]
-                - tag: td
-                  children: [Test 2 - 2]
-                - tag: td
-                  children: [Test 2 - 3]
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 3 - 1]
-                - tag: td
-                  children: [Test 3 - 2]
-                - tag: td
-                  children: [Test 3 - 3]
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 4 - 1]
-                - tag: td
-                  children: [Test 4 - 2]
-                - tag: td
-                  children: [Test 4 - 3]
-
+  expected: '<article><table><thead><tr><th>Test 1 - 1</th><th>Test 1 - 2</th><th>Test 1 - 3</th></tr></thead><tbody><tr><td>Test 2 - 1</td><td>Test 2 - 2</td><td>Test 2 - 3</td></tr><tr><td>Test 3 - 1</td><td>Test 3 - 2</td><td>Test 3 - 3</td></tr><tr><td>Test 4 - 1</td><td>Test 4 - 2</td><td>Test 4 - 3</td></tr></tbody></table></article>'
 - name: Advanced table with if and else
   config:
     variables:
@@ -918,38 +572,7 @@
     * Test 3 - 3
     {% /if %}
     {% /table %}
-  expected:
-    - tag: table
-      children:
-        - tag: thead
-          children:
-            - tag: tr
-              children:
-                - tag: th
-                  children: [Test 1 - 1]
-                - tag: th
-                  children: [Test 1 - 2]
-                - tag: th
-                  children: [Test 1 - 3]
-        - tag: tbody
-          children:
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 2 - 1 - alternate]
-                - tag: td
-                  children: [Test 2 - 2 - alternate]
-                - tag: td
-                  children: [Test 2 - 3 - alternate]
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 3 - 1]
-                - tag: td
-                  children: [Test 3 - 2]
-                - tag: td
-                  children: [Test 3 - 3]
-
+  expected: '<article><table><thead><tr><th>Test 1 - 1</th><th>Test 1 - 2</th><th>Test 1 - 3</th></tr></thead><tbody><tr><td>Test 2 - 1 - alternate</td><td>Test 2 - 2 - alternate</td><td>Test 2 - 3 - alternate</td></tr><tr><td>Test 3 - 1</td><td>Test 3 - 2</td><td>Test 3 - 3</td></tr></tbody></table></article>'
 - name: Advanced table without header
   code: |
     {% table %}
@@ -957,19 +580,7 @@
     * foo
     * bar
     {% /table %}
-  expected:
-    - tag: table
-      children:
-        - tag: thead
-        - tag: tbody
-          children:
-            - tag: tr
-              children:
-                - tag: td
-                  children: [foo]
-                - tag: td
-                  children: [bar]
-
+  expected: '<article><table><thead></thead><tbody><tr><td>foo</td><td>bar</td></tr></tbody></table></article>'
 - name: Advanced table with inner content
   code: |
     {% table %}
@@ -986,33 +597,7 @@
         bar
     * baz
     {% /table %}
-  expected:
-    - tag: table
-      children:
-        - tag: thead
-        - tag: tbody
-          children:
-            - tag: tr
-              children:
-                - tag: td
-                  children: [foo]
-                - tag: td
-                  children:
-                    - tag: pre
-                      attributes:
-                        data-language: ruby
-                      children: ["puts \"test\"\n"]
-                - tag: td
-                  children: [bar]
-            - tag: tr
-              children:
-                - tag: td
-                  children: [foo]
-                - tag: td
-                  children: [bar]
-                - tag: td
-                  children: [baz]
-
+  expected: "<article><table><thead></thead><tbody><tr><td>foo</td><td><pre data-language=\"ruby\">puts &quot;test&quot;\n</pre></td><td>bar</td></tr><tr><td>foo</td><td>bar</td><td>baz</td></tr></tbody></table></article>"
 - name: GFM table syntax surrounded by a table tag
   code: |
     {% table %}
@@ -1021,32 +606,7 @@
     Test 1 - 1 | Test 1 - 2
     Test 2 - 1 | Test 2 - 2
     {% /table %}
-  expected:
-    - tag: table
-      children:
-        - tag: thead
-          children:
-            - tag: tr
-              children:
-                - tag: th
-                  children: [Foo]
-                - tag: th
-                  children: [Bar]
-        - tag: tbody
-          children:
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 1 - 1]
-                - tag: td
-                  children: [Test 1 - 2]
-            - tag: tr
-              children:
-                - tag: td
-                  children: [Test 2 - 1]
-                - tag: td
-                  children: [Test 2 - 2]
-
+  expected: '<article><table><thead><tr><th>Foo</th><th>Bar</th></tr></thead><tbody><tr><td>Test 1 - 1</td><td>Test 1 - 2</td></tr><tr><td>Test 2 - 1</td><td>Test 2 - 2</td></tr></tbody></table></article>'
 - name: Closing tag with trailing whitespace
   config:
     tags:
@@ -1059,15 +619,7 @@
     {% test title="asdf" %}
     This is a test
     {% /test %}
-  expected:
-    - tag: test
-      attributes:
-        title: asdf
-      children:
-        - tag: p
-          children:
-            - This is a test
-
+  expected: '<article><test title="asdf"><p>This is a test</p></test></article>'
 - name: Escaped string in an attribute
   config:
     tags:
@@ -1078,11 +630,7 @@
             type: String
   code: |
     {% foo bar="test \"testing\" test" /%}
-  expected:
-    - tag: test
-      attributes:
-        bar: 'test "testing" test'
-
+  expected: '<article><test bar="test &quot;testing&quot; test"></test></article>'
 - name: 2D Array with new line before closing bracket
   config:
     tags:
@@ -1096,11 +644,7 @@
       [1, 2],
       [3, 4]
     ] /%}
-  expected:
-    - tag: test
-      attributes:
-        foo: [[1, 2], [3, 4]]
-
+  expected: '<article><test foo="1,2,3,4"></test></article>'
 - name: 2D Array with new line and comma before closing bracket
   config:
     tags:
@@ -1114,11 +658,7 @@
       [1, 2],
       [3, 4],
     ] /%}
-  expected:
-    - tag: test
-      attributes:
-        foo: [[1, 2], [3, 4]]
-
+  expected: '<article><test foo="1,2,3,4"></test></article>'
 - name: 2D Array single line
   config:
     tags:
@@ -1129,10 +669,7 @@
             type: Array
   code: |
     {% test foo=[[1, 2], [3, 4]] /%}
-  expected:
-    - tag: test
-      attributes:
-        foo: [[1, 2], [3, 4]]
+  expected: '<article><test foo="1,2,3,4"></test></article>'
 - name: Empty array attribute value
   config:
     tags:
@@ -1145,15 +682,7 @@
     {% test foo=[] %}
     testing
     {% /test %}
-  expected:
-    - tag: test
-      attributes:
-        foo: []
-      children:
-        - tag: p
-          children:
-            - testing
-
+  expected: '<article><test foo=""><p>testing</p></test></article>'
 - name: Empty hash attribute value
   config:
     tags:
@@ -1166,15 +695,7 @@
     {% test foo={} %}
     testing
     {% /test %}
-  expected:
-    - tag: test
-      attributes:
-        foo: {}
-      children:
-        - tag: p
-          children:
-            - testing
-
+  expected: '<article><test foo="[object Object]"><p>testing</p></test></article>'
 - name: Spaces inside of curly braces
   config:
     tags:
@@ -1187,56 +708,24 @@
     {% test foo={ bar: 1, baz: 2 } %}
     testing
     {% /test %}
-  expected:
-    - tag: test
-      attributes:
-        foo: { bar: 1, baz: 2 }
-      children:
-        - tag: p
-          children:
-            - testing
+  expected: '<article><test foo="[object Object]"><p>testing</p></test></article>'
 - name: Image
   code: |
     ![Alt](/logo.png)
-  expected:
-    - tag: p
-      children:
-        - tag: img
-          attributes:
-            src: '/logo.png'
-            alt: 'Alt'
-
+  expected: '<article><p><img src="/logo.png" alt="Alt"></p></article>'
 - name: Hardbreak expressed with spaces
   code: "This is a paragraph  \nwith a hardbreak"
-  expected:
-    - tag: p
-      children:
-        - 'This is a paragraph'
-        - tag: br
-        - 'with a hardbreak'
-
+  expected: '<article><p>This is a paragraph<br>with a hardbreak</p></article>'
 - name: Hardbreak expressed with backslash
   code: |
     This is a paragraph\
     with a hardbreak
-  expected:
-    - tag: p
-      children:
-        - 'This is a paragraph'
-        - tag: br
-        - 'with a hardbreak'
-
+  expected: '<article><p>This is a paragraph<br>with a hardbreak</p></article>'
 - name: Softbreak
   code: |
     This is a paragraph
     with a softbreak
-  expected:
-    - tag: p
-      children:
-        - 'This is a paragraph'
-        - ' '
-        - 'with a softbreak'
-
+  expected: '<article><p>This is a paragraph with a softbreak</p></article>'
 - name: Partial
   config:
     partials:
@@ -1245,12 +734,7 @@
     This is a test
 
     {% partial file="foo.md" variables={foo: 1} /%}
-  expected:
-    - tag: p
-      children: [This is a test]
-    - tag: p
-      children: [This is content from a partial]
-
+  expected: '<article><p>This is a test</p><p>This is content from a partial</p></article>'
 - name: Multiple partials
   config:
     partials:
@@ -1269,17 +753,7 @@
     {% partial file="foo.md" /%}
 
     {% partial file="bar.md" /%}
-  expected:
-    - tag: p
-      children: [This is a test]
-    - tag: p
-      children: [This is content from a partial]
-    - tag: test
-      children:
-        - tag: p
-          children:
-            - This is content in another partial
-
+  expected: '<article><p>This is a test</p><p>This is content from a partial</p><test><p>This is content in another partial</p></test></article>'
 - name: Partial with a variable
   config:
     tags:
@@ -1297,17 +771,7 @@
     This is a test
 
     {% partial file="foo.md" variables={foo: 1} /%}
-  expected:
-    - tag: p
-      children: [This is a test]
-    - tag: test
-      attributes:
-        bar: 1
-      children:
-        - tag: p
-          children:
-            - 'This is a partial with a variable'
-
+  expected: '<article><p>This is a test</p><test bar="1"><p>This is a partial with a variable</p></test></article>'
 # Truthiness checks
 
 - name: Untruthy things are false
@@ -1338,10 +802,7 @@
     {% if and($foo, $bar) %}
     Nope
     {% /if %}
-  expected:
-    - tag: p
-      children: [This is a test]
-
+  expected: '<article><p>This is a test</p></article>'
 - name: Truthy things are not false
   config:
     variables:
@@ -1368,25 +829,10 @@
     {% if and($foo, $bar, $baz) %}
     and
     {% /if %}
-  expected:
-    - tag: p
-      children: [foo]
-    - tag: p
-      children: [bar]
-    - tag: p
-      children: [baz]
-    - tag: p
-      children: [zero]
-    - tag: p
-      children: [and]
+  expected: '<article><p>foo</p><p>bar</p><p>baz</p><p>zero</p><p>and</p></article>'
 - name: Strikethroughs
   code: '~~Strike~~'
-  expected:
-    - tag: p
-      children:
-        - tag: s
-          children: [Strike]
-
+  expected: '<article><p><s>Strike</s></p></article>'
 # Indentation tests
 
 - name: Indented paragraph in a tag
@@ -1400,14 +846,7 @@
             This is a test
         {% /foo %}
     {% /foo %}
-  expected:
-    - tag: div
-      children:
-        - tag: div
-          children:
-            - tag: p
-              children: ['This is a test']
-
+  expected: '<article><div><div><p>This is a test</p></div></div></article>'
 - name: Indented fence in a tag
   config:
     tags:
@@ -1421,17 +860,7 @@
             ```
         {% /foo %}
     {% /foo %}
-  expected:
-    - tag: div
-      children:
-        - tag: div
-          children:
-            - tag: pre
-              attributes:
-                data-language: javascript
-              children:
-                - "console.log('test');\n"
-
+  expected: "<article><div><div><pre data-language=\"javascript\">console.log('test');\n</pre></div></div></article>"
 - name: Oddly indented paragraph in a tag
   config:
     tags:
@@ -1443,14 +872,7 @@
        This is a test
         {% /foo %}
     {% /foo %}
-  expected:
-    - tag: div
-      children:
-        - tag: div
-          children:
-            - tag: p
-              children: ['This is a test']
-
+  expected: '<article><div><div><p>This is a test</p></div></div></article>'
 - name: Indented paragraph in a tag
   config:
     tags:
@@ -1463,23 +885,7 @@
           * bar
             * baz
             * qux
-  expected:
-    - tag: p
-      children: [test]
-    - tag: ul
-      children:
-        - tag: li
-          children: [foo]
-        - tag: li
-          children:
-            - bar
-            - tag: ul
-              children:
-                - tag: li
-                  children: [baz]
-                - tag: li
-                  children: [qux]
-
+  expected: '<article><p>test</p><ul><li>foo</li><li>bar<ul><li>baz</li><li>qux</li></ul></li></ul></article>'
 - name: Indented paragraph in a tag
   config:
     tags:
@@ -1498,34 +904,7 @@
             * zxcv
       {% /foo %}
     {% /foo %}
-  expected:
-    - tag: div
-      children:
-        - tag: div
-          children:
-            - tag: ul
-              children:
-                - tag: li
-                  children: [foo]
-                - tag: li
-                  children:
-                    - bar
-                    - tag: ul
-                      children:
-                        - tag: li
-                          children: [baz]
-                        - tag: li
-                          children: [qux]
-                        - tag: li
-                          children:
-                            - tag: pre
-                              attributes:
-                                data-language: javascript
-                              children:
-                                - "console.log('test');\n"
-                        - tag: li
-                          children: [zxcv]
-
+  expected: "<article><div><div><ul><li>foo</li><li>bar<ul><li>baz</li><li>qux</li><li><pre data-language=\"javascript\">console.log('test');\n</pre></li><li>zxcv</li></ul></li></ul></div></div></article>"
 - name: String hash key
   config:
     tags:
@@ -1538,15 +917,7 @@
     {% foo bar={"this is a test": "test"} %}
     testing
     {% /foo %}
-  expected:
-    - tag: div
-      attributes:
-        bar:
-          this is a test: test
-      children:
-        - tag: p
-          children: [testing]
-
+  expected: '<article><div bar="[object Object]"><p>testing</p></div></article>'
 - name: Illegal string hash key
   config:
     tags:
@@ -1559,15 +930,7 @@
     {% foo bar={"this is a test": "test", "$$mdtype": true} %}
     testing
     {% /foo %}
-  expected:
-    - tag: div
-      attributes:
-        bar:
-          this is a test: test
-      children:
-        - tag: p
-          children: [testing]
-
+  expected: '<article><div bar="[object Object]"><p>testing</p></div></article>'
 - name: Ignoring comments
   code: |
     # Example <!-- foo -->
@@ -1578,12 +941,7 @@
     <!--
     baz
     -->
-  expected:
-    - tag: h1
-      children: ['Example ']
-    - tag: p
-      children: ['This is a test ']
-
+  expected: '<article><h1>Example </h1><p>This is a test </p></article>'
 - name: Escaped quotes in tag strings
   config:
     tags:
@@ -1594,13 +952,8 @@
             type: String
   code: |
     {% foo bar="this is a test of \"quoted\" strings" /%}
-  expected:
-    - tag: foo
-      attributes:
-        bar: 'this is a test of "quoted" strings'
-
+  expected: '<article><foo bar="this is a test of &quot;quoted&quot; strings"></foo></article>'
 - name: Escaped quotes in tag strings with html renderer
-  renderer: html
   config:
     tags:
       foo:
@@ -1610,7 +963,7 @@
             type: String
   code: |
     {% foo bar="this is a test of \"quoted\" strings" /%}
-  expected: <article><foo bar="this is a test of &quot;quoted&quot; strings"></foo></article>
+  expected: '<article><foo bar="this is a test of &quot;quoted&quot; strings"></foo></article>'
 
 - name: Escaped newline in tag strings
   config:
@@ -1622,13 +975,7 @@
             type: String
   code: |
     {% foo bar="this is a test\nof a newline in a tag" /%}
-  expected:
-    - tag: foo
-      attributes:
-        bar: |-
-          this is a test
-          of a newline in a tag
-
+  expected: "<article><foo bar=\"this is a test\nof a newline in a tag\"></foo></article>"
 - name: Basic slot
   config:
     tags:
@@ -1643,14 +990,7 @@
       {% /slot %}
     {% /foo %}
   slots: true
-  expected:
-    - tag: foo
-      attributes:
-        bar:
-          - tag: p
-            children:
-              - This is a test
-
+  expected: '<article><foo bar="[object Object]"></foo></article>'
 - name: Tag with multiple slots and additional content
   config:
     tags:
@@ -1675,26 +1015,7 @@
       This is additional content
     {% /foo %}
   slots: true
-  expected:
-    - tag: foo
-      attributes:
-        qux: test
-        bar:
-          - tag: p
-            children:
-              - This is a test
-        baz:
-          - tag: p
-            children:
-              - 'This is '
-              - tag: strong
-                children: [another]
-              - ' test'
-      children:
-        - tag: p
-          children:
-            - This is additional content
-
+  expected: '<article><foo qux="test" bar="[object Object]" baz="[object Object]"><p>This is additional content</p></foo></article>'
 - name: User slot tag when slots are disabled
   config:
     tags:
@@ -1704,12 +1025,7 @@
     {% slot %}
     bar
     {% /slot %}
-  expected:
-    - tag: foo
-      children:
-        - tag: p
-          children: [bar]
-
+  expected: '<article><foo><p>bar</p></foo></article>'
 - name: Handling slots that are missing a name
   config:
     tags:
@@ -1808,21 +1124,7 @@
       {% /slot %}
     {% /foo %}
   slots: true
-  expected:
-    - tag: foo
-      attributes:
-        bar: 'test'
-    - tag: foo
-      attributes:
-        bar:
-          - tag: p
-            children: [test]
-    - tag: foo
-      attributes:
-        bar:
-          - tag: p
-            children: [test]
-
+  expected: '<article><foo bar="test"></foo><foo bar="[object Object]"></foo><foo bar="[object Object]"></foo></article>'
 - name: Hnadling slot that doesn't render
   config:
     tags:
@@ -1840,12 +1142,7 @@
     test
     {% /slot %}
     {% /foo %}
-  expected:
-    - tag: foo
-      children:
-        - tag: p
-          children: [this is a test]
-
+  expected: '<article><foo><p>this is a test</p></foo></article>'
 - name: Slot with a variable
   config:
     variables:
@@ -1862,13 +1159,7 @@
       {% /slot %}
     {% /foo %}
   slots: true
-  expected:
-    - tag: foo
-      attributes:
-        bar:
-          - tag: p
-            children: ['This is a ', 'test']
-
+  expected: '<article><foo bar="[object Object]"></foo></article>'
 - name: Multiline block tags
   config:
     tags:
@@ -1881,14 +1172,7 @@
     %}
     This is a test
     {% /foo %}
-  expected:
-    - tag: foo
-      attributes:
-        id: bar
-      children:
-        - tag: p
-          children: [This is a test]
-
+  expected: '<article><foo id="bar"><p>This is a test</p></foo></article>'
 - name: Multiline block tags with closing on line with content
   config:
     tags:
@@ -1899,10 +1183,4 @@
     #bar %}
     This is a test
     {% /foo %}
-  expected:
-    - tag: foo
-      attributes:
-        id: bar
-      children:
-        - tag: p
-          children: [This is a test]
+  expected: '<article><foo id="bar"><p>This is a test</p></foo></article>'
