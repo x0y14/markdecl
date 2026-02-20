@@ -1,8 +1,8 @@
 {
-  "name": "@markdoc/markdoc",
-  "author": "Ryan Paul",
-  "version": "0.5.4",
-  "description": "A text markup language for documentation",
+  "name": "markdecl",
+  "author": "Yuhei Yamauchi",
+  "version": "0.1.0",
+  "description": "fork of markdoc",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
@@ -67,13 +67,5 @@
     "typedoc": "^0.22.13",
     "typescript": "^4.5.4",
     "yaml-js": "^0.2.3"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/markdoc/markdoc.git"
-  },
-  "bugs": {
-    "url": "https://github.com/markdoc/markdoc/issues"
-  },
-  "homepage": "https://markdoc.dev"
+  }
 }
