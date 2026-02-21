@@ -26,8 +26,7 @@
     "postgrammar": "oxfmt --write src/grammar/tag.js",
     "format": "oxfmt --write index.ts src spec",
     "format:check": "oxfmt --check index.ts src spec",
-    "type:check": "tsc --noEmit",
-    "typedoc": "typedoc index.ts --includeVersion --readme none --excludePrivate --excludeExternals --excludeInternal --sort source-order --out types"
+    "type:check": "tsc --noEmit"
   },
   "packageManager": "pnpm@10.30.1",
   "engines": {
@@ -48,7 +47,6 @@
     "oxfmt": "^0.34.0",
     "oxlint": "^1.49.0",
     "peggy": "^5.0.6",
-    "typedoc": "^0.28.17",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vite-plugin-dts": "^4.5.4",
