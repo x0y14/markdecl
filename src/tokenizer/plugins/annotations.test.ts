@@ -366,7 +366,9 @@ describe('MarkdownIt Annotations plugin', function () {
 
   describe('parsing inline annotations', function () {
     it('with a header', function () {
-      const example = parse('# This is a test {% id="foo" bar=true baz=true %}');
+      const example = parse(
+        '# This is a test {% id="foo" bar=true baz=true %}'
+      );
       expect(example).toDeepEqualSubset([
         { type: 'heading_open' },
         {

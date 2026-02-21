@@ -717,7 +717,6 @@ describe('Markdown parser', function () {
         ],
       });
     });
-
   });
 
   it('displays error for annotations in a fence', function () {
