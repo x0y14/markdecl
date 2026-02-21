@@ -1,6 +1,4 @@
 import Tag from './tag';
-import { Class } from './schema-types/class';
-import { Id } from './schema-types/id';
 import { isPromise } from './utils';
 import type {
   Config,
@@ -8,16 +6,8 @@ import type {
   Node,
   NodeType,
   RenderableTreeNodes,
-  Schema,
   Transformer,
 } from './types';
-
-type AttributesSchema = Schema['attributes'];
-
-export const globalAttributes: AttributesSchema = {
-  class: { type: Class, render: true },
-  id: { type: Id, render: true },
-};
 
 export default {
   findSchema(node: Node, { nodes = {}, tags = {} }: Config = {}) {
@@ -28,7 +18,7 @@ export default {
     const schema = this.findSchema(node, config) ?? {};
     const output: Record<string, any> = {};
 
-    const attrs = { ...globalAttributes, ...schema.attributes };
+    const attrs = { ...schema.attributes };
     for (const [key, attr] of Object.entries(attrs)) {
       if (attr.render == false) continue;
 

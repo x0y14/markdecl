@@ -398,15 +398,16 @@ bar
       ]);
     });
 
-    it('properly validates ids', () => {
-      const correct = validate(`# foo {% #bar %}`, {});
-      expect(correct).toEqual([]);
-
-      const number = validate(`# foo {% #1bar %}`, {});
-      expect(number[0]?.error.id).toEqual('attribute-value-invalid');
-
-      const hash = validate(`# foo {% id="#bar" %}`, {});
-      expect(hash[0]?.error.id).toEqual('attribute-value-invalid');
+    it('id attribute is rejected without schema definition', () => {
+      const result = validate(`# foo {% id="bar" %}`, {});
+      expect(result).toDeepEqualSubset([
+        {
+          error: {
+            id: 'attribute-undefined',
+            message: "Invalid attribute: 'id'",
+          },
+        },
+      ]);
     });
   });
 

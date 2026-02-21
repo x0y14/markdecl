@@ -27,9 +27,7 @@ function annotate(node: Node, attributes: AttributeValue[]) {
           message: `Attribute '${name}' already set`,
         });
       node.attributes[name] = value;
-    } else if (type === 'class')
-      if (node.attributes.class) node.attributes.class[name] = value;
-      else node.attributes.class = { [name]: value };
+    }
   }
 }
 

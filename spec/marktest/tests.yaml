@@ -1,7 +1,3 @@
-- name: Heading with an ID
-  code: |
-    # This is a test {% #asdf %}
-  expected: '<article><h1 id="asdf">This is a test </h1></article>'
 - name: Ordered list
   code: |
     1. foo
@@ -14,14 +10,6 @@
     3. bar
     4. baz
   expected: '<article><ol start="2"><li>foo</li><li>bar</li><li>baz</li></ol></article>'
-- name: Heading with a class
-  code: |
-    # This is a test {% .asdf %}
-  expected: '<article><h1 class="asdf">This is a test </h1></article>'
-- name: Heading with multiple classes
-  code: |
-    # This is a test {% .foo .bar %}
-  expected: '<article><h1 class="foo bar">This is a test </h1></article>'
 - name: Tag with hash and array
   config:
     tags:
@@ -92,12 +80,6 @@
   code: |
     This is a `test`
   expected: '<article><p>This is a <code>test</code></p></article>'
-- name: Fenced code block with an annotation
-  code: |
-    ```ruby {% #test %}
-    example
-    ```
-  expected: "<article><pre id=\"test\" data-language=\"ruby\">example\n</pre></article>"
 - name: Frontmatter
   code: |
     ---
@@ -315,10 +297,6 @@
     This is a test
     {% /test %}
   expected: '<article><test foo="1,2,3"><p>This is a test</p></test></article>'
-- name: Rendering HTML with a class name
-  code: |
-    # This is a test {% .foo .bar %}
-  expected: '<article><h1 class="foo bar">This is a test </h1></article>'
 - name: Ignoring tags in fenced code blocks
   code: |
     ```javascript {% process=false %}
@@ -1165,22 +1143,30 @@
     tags:
       foo:
         render: foo
+        attributes:
+          bar:
+            type: String
+            render: true
   code: |
-    {% 
+    {%
     foo
-    #bar
+    bar="baz"
     %}
     This is a test
     {% /foo %}
-  expected: '<article><foo id="bar"><p>This is a test</p></foo></article>'
+  expected: '<article><foo bar="baz"><p>This is a test</p></foo></article>'
 - name: Multiline block tags with closing on line with content
   config:
     tags:
       foo:
         render: foo
+        attributes:
+          bar:
+            type: String
+            render: true
   code: |
     {% foo
-    #bar %}
+    bar="baz" %}
     This is a test
     {% /foo %}
-  expected: '<article><foo id="bar"><p>This is a test</p></foo></article>'
+  expected: '<article><foo bar="baz"><p>This is a test</p></foo></article>'

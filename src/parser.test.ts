@@ -458,7 +458,7 @@ describe('Markdown parser', function () {
 
     it('with an annotation', function () {
       const example = convert(`
-      ${fence}ruby {% #foo .bar %}
+      ${fence}ruby {% render=false %}
       test
       ${fence}
       `);
@@ -469,8 +469,7 @@ describe('Markdown parser', function () {
           {
             type: 'fence',
             attributes: {
-              id: 'foo',
-              class: { bar: true },
+              render: false,
               language: 'ruby',
               content: 'test\n',
             },
@@ -482,55 +481,6 @@ describe('Markdown parser', function () {
 
   describe('handling tags', function () {
     describe('at block level', function () {
-      it('with a class', function () {
-        const example = convert(`
-        {% callout .foo .bar %}
-        ### Heading
-
-        This is a paragraph
-        {% /callout %}
-        `);
-
-        expect(example).toDeepEqualSubset({
-          type: 'document',
-          children: [
-            {
-              type: 'tag',
-              tag: 'callout',
-              attributes: { class: { foo: true, bar: true } },
-              children: [
-                {
-                  type: 'heading',
-                  attributes: { level: 3 },
-                  children: [
-                    {
-                      type: 'inline',
-                      children: [
-                        { type: 'text', attributes: { content: 'Heading' } },
-                      ],
-                    },
-                  ],
-                },
-                {
-                  type: 'paragraph',
-                  children: [
-                    {
-                      type: 'inline',
-                      children: [
-                        {
-                          type: 'text',
-                          attributes: { content: 'This is a paragraph' },
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        });
-      });
-
       it('with nesting', function () {
         const example = convert(`
         {% callout %}
@@ -577,14 +527,14 @@ describe('Markdown parser', function () {
 
   describe('handling annotations', function () {
     describe('in a header', function () {
-      it('with an id', function () {
-        const example = convert(`# Sample Heading {% #foo-bar %}`);
+      it('with a key-value attribute', function () {
+        const example = convert(`# Sample Heading {% foo="bar" %}`);
         expect(example).toDeepEqualSubset({
           type: 'document',
           children: [
             {
               type: 'heading',
-              attributes: { id: 'foo-bar', level: 1 },
+              attributes: { level: 1, foo: 'bar' },
               children: [
                 {
                   type: 'inline',
@@ -600,60 +550,21 @@ describe('Markdown parser', function () {
           ],
         });
       });
+    });
 
-      it('with a class', function () {
-        const example = convert(`# Sample Heading {% .foo-bar .test %}`);
-        expect(example).toDeepEqualSubset({
-          type: 'document',
-          children: [
-            {
-              type: 'heading',
-              attributes: { class: { 'foo-bar': true, test: true }, level: 1 },
-              children: [
-                {
-                  type: 'inline',
-                  children: [
-                    {
-                      type: 'text',
-                      attributes: { content: 'Sample Heading ' },
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        });
+    describe('shortcut syntax is rejected', function () {
+      it('.class shortcut causes parse error', function () {
+        const example = convert(`{% tag .foo %}`);
+        const errors = example.children[0].errors;
+        expect(errors.length).toBeGreaterThan(0);
+        expect(errors[0].id).toEqual('parse-error');
       });
 
-      it('with complex values', function () {
-        const example = convert(
-          `# Sample Heading {% #asdf .foo-bar .test foo="bar" %}`
-        );
-        expect(example).toDeepEqualSubset({
-          type: 'document',
-          children: [
-            {
-              type: 'heading',
-              attributes: {
-                class: { 'foo-bar': true, test: true },
-                id: 'asdf',
-                level: 1,
-                foo: 'bar',
-              },
-              children: [
-                {
-                  type: 'inline',
-                  children: [
-                    {
-                      type: 'text',
-                      attributes: { content: 'Sample Heading ' },
-                    },
-                  ],
-                },
-              ],
-            },
-          ],
-        });
+      it('#id shortcut causes parse error', function () {
+        const example = convert(`{% tag #bar %}`);
+        const errors = example.children[0].errors;
+        expect(errors.length).toBeGreaterThan(0);
+        expect(errors[0].id).toEqual('parse-error');
       });
     });
   });
@@ -779,23 +690,6 @@ describe('Markdown parser', function () {
       });
     });
 
-    it('with error for duplicate ids', function () {
-      const example = convert(`{% foo #bar #baz #qux /%}`);
-      expect(example.children[0].errors.length).toBe(2);
-      expect(example).toDeepEqualSubset({
-        type: 'document',
-        children: [
-          {
-            tag: 'foo',
-            errors: [
-              { id: 'duplicate-attribute' },
-              { id: 'duplicate-attribute' },
-            ],
-          },
-        ],
-      });
-    });
-
     it('with annotation values', function () {
       const example = convert(`testing {% foo=1 foo=2 %}`);
       expect(example.children[0].errors.length).toBe(1);
@@ -824,17 +718,13 @@ describe('Markdown parser', function () {
       });
     });
 
-    it('with no error for multiple classes', function () {
-      const example = convert(`{% foo .bar .baz .qux /%}`);
-      expect(example.children[0].errors.length).toBe(0);
-    });
   });
 
   it('displays error for annotations in a fence', function () {
     const example = convert(`
     ~~~
     test
-    {% #foo %}
+    {% foo=true %}
     test
     ~~~
     `);
