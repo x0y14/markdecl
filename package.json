@@ -18,7 +18,7 @@
     "test": "node -r ts-eager/register ./node_modules/.bin/jasmine",
     "marktest": "node -r ts-eager/register ${INSPECT:+--inspect-brk} spec/marktest/index.ts spec/marktest/tests.yaml",
     "prebuild": "npx patch-package",
-    "build": "npm run build:common && npm run build:types",
+    "build": "pnpm run build:common && pnpm run build:types",
     "build:common": "node build.js",
     "build:types": "tsc --emitDeclarationOnly --outDir dist",
     "lint": "eslint .",
@@ -29,6 +29,7 @@
     "type:check": "tsc --noEmit",
     "typedoc": "typedoc index.ts --includeVersion --readme none --excludePrivate --excludeExternals --excludeInternal --sort source-order --out types"
   },
+  "packageManager": "pnpm@10.30.1",
   "engines": {
     "node": ">=14.7.0"
   },
