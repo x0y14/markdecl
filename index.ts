@@ -9,7 +9,7 @@ import Tag from './src/tag';
 import tags from './src/tags';
 import { truthy } from './src/tags/conditional';
 import Tokenizer from './src/tokenizer';
-import transformer, { globalAttributes } from './src/transformer';
+import transformer from './src/transformer';
 import transforms from './src/transforms';
 import { parseTags } from './src/utils';
 import validator, { validateTree } from './src/validator';
@@ -110,7 +110,6 @@ export {
   nodes,
   tags,
   functions,
-  globalAttributes,
   transforms,
   renderers,
   Ast,
@@ -128,7 +127,6 @@ export default class Markdoc {
   static nodes = nodes;
   static tags = tags;
   static functions = functions;
-  static globalAttributes = globalAttributes;
   static renderers = renderers;
   static transforms = transforms;
   static Ast = Ast;

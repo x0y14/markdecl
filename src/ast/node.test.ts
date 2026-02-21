@@ -199,23 +199,6 @@ describe('transform', function () {
   });
 
   describe('attributes', function () {
-    it('with an id', function () {
-      const example = new Node('paragraph', { id: 'bar' });
-      const output = transform(example);
-      expect(output).toDeepEqualSubset({
-        name: 'p',
-        attributes: { id: 'bar' },
-      });
-    });
-
-    it('with a class', function () {
-      const example = new Node('paragraph', {
-        class: { foo: true, bar: false },
-      });
-      const output = transform(example);
-      expect(output).toDeepEqual(new Tag('p', { class: 'foo' }, []));
-    });
-
     it('with boolean render attribute', function () {
       const example = new Node('foo', { bar: 1, baz: 'test' });
       const foo = {
@@ -355,7 +338,7 @@ describe('transform', function () {
   describe('annotations', () => {
     it('multiple values should be ordered correctly', () => {
       const example = markdoc.parse(
-        `\`\`\`js {% z=true .class y=2 x="1" #id %} \nContent\n\`\`\``
+        `\`\`\`js {% z=true y=2 x="1" %} \nContent\n\`\`\``
       );
 
       const fence = example.children[0];
@@ -365,19 +348,29 @@ describe('transform', function () {
       expect(attributes).toEqual({
         content: 'Content\n',
         language: 'js',
-        id: 'id',
-        class: { class: true },
         z: true,
         y: 2,
         x: '1',
       });
       expect(annotations).toDeepEqual([
         { type: 'attribute', name: 'z', value: true },
-        { type: 'class', name: 'class', value: true },
         { type: 'attribute', name: 'y', value: 2 },
         { type: 'attribute', name: 'x', value: '1' },
-        { type: 'attribute', name: 'id', value: 'id' },
       ]);
+    });
+  });
+
+  describe('class/id not auto-inserted', () => {
+    it('paragraph with class set does not include class in transform output', () => {
+      const example = new Node('paragraph', { class: 'foo' });
+      const output = transform(example) as Tag;
+      expect(output).toDeepEqual(new Tag('p', {}, []));
+    });
+
+    it('paragraph with id set does not include id in transform output', () => {
+      const example = new Node('paragraph', { id: 'bar' });
+      const output = transform(example) as Tag;
+      expect(output).toDeepEqual(new Tag('p', {}, []));
     });
   });
 

@@ -1,4 +1,3 @@
-import { globalAttributes } from './transformer';
 import Ast from './ast/index';
 import { isPromise } from './utils';
 
@@ -161,7 +160,6 @@ export default function validator(node: Node, config: Config) {
     });
 
   const attributes = {
-    ...globalAttributes,
     ...schema.attributes,
   };
 

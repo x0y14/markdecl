@@ -73,24 +73,13 @@ function formatAnnotationValue(a: AttributeValue): string | undefined {
 
   if (formattedValue === undefined) return undefined;
   if (a.name === 'primary') return formattedValue;
-  if (a.name === 'id' && typeof a.value === 'string' && isIdentifier(a.value))
-    return '#' + a.value;
-  if (a.type === 'class' && isIdentifier(a.name)) return '.' + a.name;
 
   return `${a.name}=${formattedValue}`;
 }
 
 function* formatAttributes(n: Node) {
   for (const [key, value] of Object.entries(n.attributes)) {
-    /**
-     * In cases where the class attribute is not a valid identifer, we treat it as a
-     * regular attribute without the '.' sigil
-     */
-    if (key === 'class' && typeof value === 'object' && !Ast.isAst(value))
-      for (const name of Object.keys(value)) {
-        yield formatAnnotationValue({ type: 'class', name, value });
-      }
-    else yield formatAnnotationValue({ type: 'attribute', name: key, value });
+    yield formatAnnotationValue({ type: 'attribute', name: key, value });
   }
 }
 

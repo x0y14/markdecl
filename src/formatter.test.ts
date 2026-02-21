@@ -10,31 +10,31 @@ title: What is Markdoc?
 
 ---
 
-# {% $markdoc.frontmatter.title %} {% #overview %}
+# {% $markdoc.frontmatter.title %} {% overview=true %}
 
 Markdoc is a **Markdown**-based \`syntax\` and _toolchain_ for creating ~~custom~~ documentation sites. Stripe created Markdoc to power [our public docs](http://stripe.com/docs).
 
-> Blockquote {% .special %}
+> Blockquote {% special=true %}
 
 ---
 
 [Link](/href   "title")
     ![Alt](/image   "title")
 
-{% callout #id   .class  .class2   a="check" b={"e":{"with space": 5}} c=8 d=[1,    "2",true,  null] %}
+{% callout a="check" b={"e":{"with space": 5}} c=8 d=[1,    "2",true,  null] %}
 Markdoc is open-source—check out it's [source](http://github.com/markdoc/markdoc) to see how it works.
 {% /callout %}
 
-\`\`\`js {% .class #id x="test"   render=false %}
+\`\`\`js {% x="test"   render=false %}
 Code!
 \`\`\`
 
-## How is {% markdoc("test", 1) %} different? {% .classname %}
+## How is {% markdoc("test", 1) %} different? {% classname=true %}
 
 foo\\
 baz
 
-Soft 
+Soft
  break
 Markdoc uses…
 `;
@@ -43,33 +43,26 @@ const expected = `---
 title: What is Markdoc?
 ---
 
-# {% $markdoc.frontmatter.title %} {% #overview %}
+# {% $markdoc.frontmatter.title %} {% overview=true %}
 
 Markdoc is a **Markdown**-based \`syntax\` and _toolchain_ for creating ~~custom~~ documentation sites. Stripe created Markdoc to power [our public docs](http://stripe.com/docs).
 
-> Blockquote {% .special %}
+> Blockquote {% special=true %}
 
 ---
 
 [Link](/href "title")
 ![Alt](/image "title")
 
-{% callout
-   #id
-   .class
-   .class2
-   a="check"
-   b={e: {"with space": 5}}
-   c=8
-   d=[1, "2", true, null] %}
+{% callout a="check" b={e: {"with space": 5}} c=8 d=[1, "2", true, null] %}
 Markdoc is open-source—check out it's [source](http://github.com/markdoc/markdoc) to see how it works.
 {% /callout %}
 
-\`\`\`js {% .class #id x="test" render=false %}
+\`\`\`js {% x="test" render=false %}
 Code!
 \`\`\`
 
-## How is {% markdoc("test", 1) %} different? {% .classname %}
+## How is {% markdoc("test", 1) %} different? {% classname=true %}
 
 foo\\
 baz
@@ -733,14 +726,14 @@ Yes!
 
   it('lists with annotated items', () => {
     const source = `
-- attributes: An object literal with key-value pairs that describe the attributes accepted by the tag. {% #id %}
-    - localizable: A boolean value (or an array) indicating whether the attribute’s value is translatable. {% #localizable %}
+- attributes: An object literal with key-value pairs that describe the attributes accepted by the tag. {% id="id" %}
+    - localizable: A boolean value (or an array) indicating whether the attribute's value is translatable. {% id="localizable" %}
         - Defaults to \`false\`
     - description: A documentation string that describes the purpose of the attribute {% align="center" %}`;
 
     const expected = `
-- attributes: An object literal with key-value pairs that describe the attributes accepted by the tag. {% #id %}
-  - localizable: A boolean value (or an array) indicating whether the attribute’s value is translatable. {% #localizable %}
+- attributes: An object literal with key-value pairs that describe the attributes accepted by the tag. {% id="id" %}
+  - localizable: A boolean value (or an array) indicating whether the attribute's value is translatable. {% id="localizable" %}
     - Defaults to \`false\`
   - description: A documentation string that describes the purpose of the attribute {% align="center" %}
 `;
@@ -820,15 +813,12 @@ ${'`'.repeat(4)}
   });
   it('multi-paragraph blockquotes', () => {
     const source = `
-> Blockquote {% .class %}
+> Blockquote {% class="test" %}
 >
 > with two paragraphs`;
 
-    const expected = `
-> Blockquote {% .class %}
-> 
-> with two paragraphs
-`;
+    const expected =
+      '> Blockquote {% class="test" %}\n> \n> with two paragraphs\n';
 
     check(source, expected);
     stable(expected);

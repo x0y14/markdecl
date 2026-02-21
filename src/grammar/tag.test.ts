@@ -131,40 +131,12 @@ describe('Markdoc tag parser', function () {
       ]);
     });
 
-    it('with an id', function () {
-      const example = parse('#test');
-      expect(example.meta.attributes).toDeepEqual([
-        { type: 'attribute', name: 'id', value: 'test' },
-      ]);
+    it('with id shortcut rejected', function () {
+      expect(() => parse('#test')).toThrowError(SyntaxError);
     });
 
-    it('with hyphens', function () {
-      const example = parse('#test-1 .foo-bar');
-      expect(example.meta.attributes).toDeepEqual([
-        { type: 'attribute', name: 'id', value: 'test-1' },
-        { type: 'class', name: 'foo-bar', value: true },
-      ]);
-    });
-
-    it('with chained classes', function () {
-      const example = parse('.foo .bar');
-      expect(example.meta.attributes).toDeepEqual([
-        { type: 'class', name: 'foo', value: true },
-        { type: 'class', name: 'bar', value: true },
-      ]);
-    });
-
-    it('with chained id and classes', function () {
-      const example = parse('#test-1 .foo .bar');
-      expect(example.meta.attributes).toDeepEqual([
-        { type: 'attribute', name: 'id', value: 'test-1' },
-        { type: 'class', name: 'foo', value: true },
-        { type: 'class', name: 'bar', value: true },
-      ]);
-    });
-
-    it('with an invalid id', () => {
-      expect(() => parse('#foo@bar.baz@test')).toThrowError(SyntaxError);
+    it('with class shortcut rejected', function () {
+      expect(() => parse('.foo .bar')).toThrowError(SyntaxError);
     });
 
     it('with key/value pairs', function () {
@@ -176,13 +148,10 @@ describe('Markdoc tag parser', function () {
       ]);
     });
 
-    it('with shortcuts and key/value pairs', function () {
-      const example = parse('#foo .bar test="asdf"', { Variable });
-      expect(example.meta.attributes).toDeepEqual([
-        { type: 'attribute', name: 'id', value: 'foo' },
-        { type: 'class', name: 'bar', value: true },
-        { type: 'attribute', name: 'test', value: 'asdf' },
-      ]);
+    it('with shortcuts and key/value pairs rejected', function () {
+      expect(() => parse('#foo .bar test="asdf"', { Variable })).toThrowError(
+        SyntaxError
+      );
     });
 
     it('with boolean key/value pairs', function () {

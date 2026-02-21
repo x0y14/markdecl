@@ -48,21 +48,7 @@ TagAttributesTail =
   _+ item:TagAttributesItem { return item; }
     
 TagAttributesItem =
-  ids:TagShortcutId { return ids } /
-  classes:TagShortcutClass { return classes } /
   attribute:TagAttribute { return attribute }
-
-TagShortcutClass 'class' =
-  '.'
-  name:Identifier {
-    return {type: 'class', name, value: true};
-  }
-
-TagShortcutId 'id' =
-  '#'
-  value:Identifier {
-    return {type: 'attribute', name: 'id', value};
-  }
 
 TagAttribute =
   name:Identifier
