@@ -12,7 +12,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "sideEffects": false,
   "license": "MIT",
@@ -26,7 +28,8 @@
     "postgrammar": "oxfmt --write src/grammar/tag.js",
     "format": "oxfmt --write index.ts src spec",
     "format:check": "oxfmt --check index.ts src spec",
-    "type:check": "tsc --noEmit"
+    "type:check": "tsc --noEmit",
+    "prepublish": "pnpm run build && pnpm run grammar"
   },
   "packageManager": "pnpm@10.30.1",
   "engines": {
@@ -57,5 +60,9 @@
     "patchedDependencies": {
       "markdown-it@14.1.1": "patches/markdown-it@14.1.1.patch"
     }
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }
