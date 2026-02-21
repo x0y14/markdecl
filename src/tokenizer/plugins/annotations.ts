@@ -3,27 +3,26 @@ import { parse, SyntaxError } from '../../grammar/tag';
 import Variable from '../../ast/variable';
 import Function from '../../ast/function';
 
-import type { AttributeValue } from '../../types';
-import type MarkdownIt from 'markdown-it/lib';
-import type StateCore from 'markdown-it/lib/rules_core/state_core';
-import type StateInline from 'markdown-it/lib/rules_inline/state_inline';
-import type StateBlock from 'markdown-it/lib/rules_block/state_block';
-import type Token from 'markdown-it/lib/token';
+import type { AttributeValue, ParserToken } from '../../types';
+import type MarkdownIt from 'markdown-it/lib/index.mjs';
+import type StateCore from 'markdown-it/lib/rules_core/state_core.mjs';
+import type StateInline from 'markdown-it/lib/rules_inline/state_inline.mjs';
+import type StateBlock from 'markdown-it/lib/rules_block/state_block.mjs';
 
 import { OPEN, CLOSE } from '../../utils';
 
 function createToken(
   state: StateBlock | StateInline,
   content: string,
-  contentStart?: number
-): Token {
+  contentStart?: number,
+): ParserToken {
   try {
     const { type, meta, nesting = 0 } = parse(content, { Variable, Function });
-    const token = state.push(type, '', nesting);
+    const token = state.push(type, '', nesting) as ParserToken;
     token.info = content;
     token.meta = meta;
 
-    if (!state.delimiters) {
+    if ('delimiters' in state && !state.delimiters) {
       state.delimiters = [];
     }
 
@@ -42,18 +41,13 @@ function createToken(
         }
       : null;
 
-    const token = state.push('error', '', 0);
+    const token = state.push('error', '', 0) as ParserToken;
     token.meta = { error: { message, location } };
     return token;
   }
 }
 
-function block(
-  state: StateBlock,
-  startLine: number,
-  endLine: number,
-  silent: boolean
-): boolean {
+function block(state: StateBlock, startLine: number, endLine: number, silent: boolean): boolean {
   const start = state.bMarks[startLine] + state.tShift[startLine];
   const finish = state.eMarks[startLine];
 
@@ -66,9 +60,7 @@ function block(
 
   const contentStart = start + OPEN.length;
   const content = state.src.slice(contentStart, tagEnd).trim();
-  const lines = state.src
-    .slice(start, tagEnd + CLOSE.length)
-    .split('\n').length;
+  const lines = state.src.slice(start, tagEnd + CLOSE.length).split('\n').length;
 
   if (content[0] === '$') return false;
 
@@ -94,14 +86,16 @@ function inline(state: StateInline, silent: boolean): boolean {
 }
 
 function core(state: StateCore) {
-  let token: Token;
+  let token: ParserToken;
   for (token of state.tokens) {
     if (token.type !== 'fence') continue;
+    const info = token.info || '';
 
-    if (token.info.includes(OPEN)) {
-      const start = token.info.indexOf(OPEN);
-      const end = findTagEnd(token.info, start);
-      const content = token.info.slice(start + OPEN.length, end);
+    if (info.includes(OPEN)) {
+      const start = info.indexOf(OPEN);
+      const end = findTagEnd(info, start);
+      if (end == null) continue;
+      const content = info.slice(start + OPEN.length, end);
 
       try {
         const { meta } = parse(content.trim(), { Variable, Function });
@@ -112,21 +106,19 @@ function core(state: StateCore) {
         token.errors.push({
           id: 'fence-tag-error',
           level: 'error',
-          message: `Syntax error in fence tag: ${
-            (error as SyntaxError).message
-          }`,
+          message: `Syntax error in fence tag: ${(error as SyntaxError).message}`,
         });
       }
     }
 
     if (
       token?.meta?.attributes?.find(
-        (attr: AttributeValue) => attr.name === 'process' && !attr.value
+        (attr: AttributeValue) => attr.name === 'process' && !attr.value,
       )
     )
       continue;
 
-    token.children = parseTags(token.content, token.map[0]);
+    token.children = parseTags(token.content || '', token.map?.[0] || 0);
   }
 }
 

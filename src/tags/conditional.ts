@@ -17,14 +17,11 @@ export function truthy(value: any) {
 }
 
 function renderConditions(node: Node) {
-  const conditions: Condition[] = [
-    { condition: node.attributes.primary, children: [] },
-  ];
+  const conditions: Condition[] = [{ condition: node.attributes.primary, children: [] }];
   for (const child of node.children) {
     if (child.type === 'tag' && child.tag === 'else')
       conditions.push({
-        condition:
-          'primary' in child.attributes ? child.attributes.primary : true,
+        condition: 'primary' in child.attributes ? child.attributes.primary : true,
         children: [],
       });
     else conditions[conditions.length - 1].children.push(child);
@@ -42,8 +39,8 @@ export const tagIf: Schema = {
     const conditions = renderConditions(node);
     for (const { condition, children } of conditions)
       if (truthy(condition)) {
-        const nodes = children.flatMap<MaybePromise<RenderableTreeNodes>>(
-          (child) => child.transform(config)
+        const nodes = children.flatMap<MaybePromise<RenderableTreeNodes>>((child) =>
+          child.transform(config),
         );
         if (nodes.some(isPromise)) {
           return Promise.all(nodes).then((nodes) => nodes.flat());

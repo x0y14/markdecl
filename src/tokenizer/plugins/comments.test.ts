@@ -97,7 +97,7 @@ describe('MarkdownIt Comments plugin', function () {
       foo <!-- example
 
       comment --> bar
-      `.trim()
+      `.trim(),
       );
 
       const expected = [

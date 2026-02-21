@@ -1,14 +1,7 @@
 import Ast from './ast/index';
 import { isPromise } from './utils';
 
-import type {
-  Node,
-  Function,
-  Config,
-  SchemaAttribute,
-  ValidationError,
-  Value,
-} from './types';
+import type { Node, Function, Config, SchemaAttribute, ValidationError, Value } from './types';
 
 const TypeMappings = {
   String: String,
@@ -24,7 +17,7 @@ export function validateType(
   type: TypeParam,
   value: Value,
   config: Config,
-  key: string
+  key: string,
 ): boolean | ValidationError[] {
   if (!type) return true;
 
@@ -33,14 +26,13 @@ export function validateType(
     return !schema?.returns
       ? true
       : Array.isArray(schema.returns)
-      ? schema.returns.find((t) => t === type) !== undefined
-      : schema.returns === type;
+        ? schema.returns.find((t) => t === type) !== undefined
+        : schema.returns === type;
   }
 
   if (Ast.isAst(value)) return true;
 
-  if (Array.isArray(type))
-    return type.some((t) => validateType(t, value, config, key));
+  if (Array.isArray(type)) return type.some((t) => validateType(t, value, config, key));
 
   if (typeof type === 'string') type = TypeMappings[type];
 
@@ -135,9 +127,7 @@ export default function validator(node: Node, config: Config) {
     errors.push({
       id: node.tag ? 'tag-undefined' : 'node-undefined',
       level: 'critical',
-      message: node.tag
-        ? `Undefined tag: '${node.tag}'`
-        : `Undefined node: '${node.type}'`,
+      message: node.tag ? `Undefined tag: '${node.tag}'` : `Undefined node: '${node.type}'`,
     });
 
     return errors;
@@ -147,9 +137,7 @@ export default function validator(node: Node, config: Config) {
     errors.push({
       id: 'tag-placement-invalid',
       level: 'critical',
-      message: `'${node.tag}' tag should be ${
-        schema.inline ? 'inline' : 'block'
-      }`,
+      message: `'${node.tag}' tag should be ${schema.inline ? 'inline' : 'block'}`,
     });
 
   if (schema.selfClosing && node.children.length > 0)
@@ -237,7 +225,7 @@ export default function validator(node: Node, config: Config) {
         level: errorLevel || 'error',
         message: `Attribute '${key}' must match one of ${displayMatches(
           matches,
-          8
+          8,
         )}. Got '${value}' instead.`,
       });
 
@@ -292,10 +280,7 @@ export default function validator(node: Node, config: Config) {
   return errors;
 }
 
-export function* walkWithParents(
-  node: Node,
-  parents: Node[] = []
-): Generator<[Node, Node[]]> {
+export function* walkWithParents(node: Node, parents: Node[] = []): Generator<[Node, Node[]]> {
   yield [node, parents];
   for (const child of [...Object.values(node.slots), ...node.children])
     yield* walkWithParents(child, [...parents, node]);
@@ -311,9 +296,7 @@ export function validateTree(content: Node, config: Config) {
     const errors = validator(node, updatedConfig);
 
     if (isPromise(errors)) {
-      return errors.then((e) =>
-        e.map((error) => ({ type, lines, location, error }))
-      );
+      return errors.then((e) => e.map((error) => ({ type, lines, location, error })));
     }
 
     return errors.map((error) => ({ type, lines, location, error }));

@@ -32,7 +32,7 @@ export default class Node implements AstType {
     type: NodeType = 'node',
     attributes: Record<string, any> = {},
     children: Node[] = [],
-    tag?: string
+    tag?: string,
   ) {
     this.attributes = attributes;
     this.children = children;
@@ -58,10 +58,7 @@ export default class Node implements AstType {
       children: this.children.map((child) => child.resolve(config)),
       attributes: resolve(this.attributes, config),
       slots: Object.fromEntries(
-        Object.entries(this.slots).map(([name, slot]) => [
-          name,
-          slot.resolve(config),
-        ])
+        Object.entries(this.slots).map(([name, slot]) => [name, slot.resolve(config)]),
       ),
     });
   }

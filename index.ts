@@ -15,7 +15,7 @@ import { parseTags } from './src/utils';
 import validator, { validateTree } from './src/validator';
 
 import type { ParserArgs } from './src/types';
-import type Token from 'markdown-it/lib/token';
+import type Token from 'markdown-it/lib/token.mjs';
 import type { Config, RenderableTreeNode, ValidateError } from './src/types';
 
 export * from './src/types';
@@ -40,60 +40,34 @@ function mergeConfig(config: Config = {}): Config {
   };
 }
 
-export function parse(
-  content: string | Token[],
-  args?: string | ParserArgs
-): Node {
+export function parse(content: string | Token[], args?: string | ParserArgs): Node {
   if (typeof content === 'string') content = tokenizer.tokenize(content);
   return parser(content, args);
 }
 
-export function resolve<C extends Config = Config>(
-  content: Node,
-  config: C
-): Node;
-export function resolve<C extends Config = Config>(
-  content: Node[],
-  config: C
-): Node[];
-export function resolve<C extends Config = Config>(
-  content: any,
-  config: C
-): any {
-  if (Array.isArray(content))
-    return content.flatMap((child) => child.resolve(config));
+export function resolve<C extends Config = Config>(content: Node, config: C): Node;
+export function resolve<C extends Config = Config>(content: Node[], config: C): Node[];
+export function resolve<C extends Config = Config>(content: any, config: C): any {
+  if (Array.isArray(content)) return content.flatMap((child) => child.resolve(config));
 
   return content.resolve(config);
 }
 
-export function transform<C extends Config = Config>(
-  node: Node,
-  config?: C
-): RenderableTreeNode;
+export function transform<C extends Config = Config>(node: Node, config?: C): RenderableTreeNode;
 export function transform<C extends Config = Config>(
   nodes: Node[],
-  config?: C
+  config?: C,
 ): RenderableTreeNode[];
-export function transform<C extends Config = Config>(
-  nodes: any,
-  options?: C
-): any {
+export function transform<C extends Config = Config>(nodes: any, options?: C): any {
   const config = mergeConfig(options);
   const content = resolve(nodes, config);
 
-  if (Array.isArray(content))
-    return content.flatMap((child) => child.transform(config));
+  if (Array.isArray(content)) return content.flatMap((child) => child.transform(config));
   return content.transform(config);
 }
 
-export function validate<C extends Config = Config>(
-  node: Node,
-  options?: C
-): ValidateError[];
-export function validate<C extends Config = Config>(
-  content: any,
-  options?: C
-): any {
+export function validate<C extends Config = Config>(node: Node, options?: C): ValidateError[];
+export function validate<C extends Config = Config>(content: any, options?: C): any {
   const config = mergeConfig(options);
   return validateTree(content, config);
 }
@@ -148,10 +122,7 @@ export default class Markdoc {
   }
 
   parse = parse;
-  resolve = (content: Parameters<typeof resolve>[0]) =>
-    resolve(content, this.config);
-  transform = (content: Parameters<typeof transform>[0]) =>
-    transform(content, this.config);
-  validate = (content: Parameters<typeof validate>[0]) =>
-    validate(content, this.config);
+  resolve = (content: Parameters<typeof resolve>[0]) => resolve(content, this.config);
+  transform = (content: Parameters<typeof transform>[0]) => transform(content, this.config);
+  validate = (content: Parameters<typeof validate>[0]) => validate(content, this.config);
 }

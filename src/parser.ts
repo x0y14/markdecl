@@ -2,9 +2,7 @@ import Node from './ast/node';
 import transforms from './transforms/index';
 import { OPEN } from './utils';
 
-import type { AttributeValue, ParserArgs } from './types';
-
-import type Token from 'markdown-it/lib/token';
+import type { AttributeValue, NodeType, ParserArgs, ParserToken } from './types';
 
 const mappings: Record<string, string> = {
   ordered_list: 'list',
@@ -31,28 +29,26 @@ function annotate(node: Node, attributes: AttributeValue[]) {
   }
 }
 
-function handleAttrs(token: Token, type: string) {
+function handleAttrs(token: ParserToken, type: string) {
   switch (type) {
     case 'heading':
-      return { level: Number(token.tag.replace('h', '')) };
+      return { level: Number((token.tag || '').replace('h', '')) };
     case 'list': {
       const attrs = token.attrs ? Object.fromEntries(token.attrs) : undefined;
       const ordered = token.type.startsWith('ordered');
       return ordered && attrs?.start
-        ? { ordered: true, start: attrs.start, marker: token.markup }
-        : { ordered, marker: token.markup };
+        ? { ordered: true, start: attrs.start, marker: token.markup || '' }
+        : { ordered, marker: token.markup || '' };
     }
     case 'link': {
-      const attrs = Object.fromEntries(token.attrs);
-      return attrs.title
-        ? { href: attrs.href, title: attrs.title }
-        : { href: attrs.href };
+      const attrs = Object.fromEntries(token.attrs || []);
+      return attrs.title ? { href: attrs.href, title: attrs.title } : { href: attrs.href };
     }
     case 'image': {
-      const attrs = Object.fromEntries(token.attrs);
+      const attrs = Object.fromEntries(token.attrs || []);
       return attrs.title
-        ? { alt: token.content, src: attrs.src, title: attrs.title }
-        : { alt: token.content, src: attrs.src };
+        ? { alt: token.content || '', src: attrs.src, title: attrs.title }
+        : { alt: token.content || '', src: attrs.src };
     }
     case 'em':
     case 'strong':
@@ -60,12 +56,12 @@ function handleAttrs(token: Token, type: string) {
     case 'text':
     case 'code':
     case 'comment':
-      return { content: (token.meta || {}).variable || token.content };
+      return { content: (token.meta || {}).variable || token.content || '' };
     case 'fence': {
-      const [language] = token.info.split(' ', 1);
+      const [language] = (token.info || '').split(' ', 1);
       return language === '' || language === OPEN
-        ? { content: token.content }
-        : { content: token.content, language };
+        ? { content: token.content || '' }
+        : { content: token.content || '', language };
     }
     case 'td':
     case 'th': {
@@ -95,19 +91,19 @@ function handleAttrs(token: Token, type: string) {
 }
 
 function handleToken(
-  token: Token,
+  token: ParserToken,
   nodes: Node[],
   file?: string,
   handleSlots?: boolean,
   addLocation?: boolean,
-  inlineParent?: Node
+  inlineParent?: Node,
 ) {
   if (token.type === 'frontmatter') {
     nodes[0].attributes.frontmatter = token.content;
     return;
   }
 
-  if (token.hidden || (token.type === 'text' && token.content === '')) return;
+  if (token.hidden || (token.type === 'text' && (token.content || '') === '')) return;
 
   const errors = token.errors || [];
   const parent = nodes[nodes.length - 1];
@@ -131,7 +127,7 @@ function handleToken(
     errors.push({ id: 'parse-error', level: 'critical', message, location });
   }
 
-  if (token.nesting < 0) {
+  if ((token.nesting || 0) < 0) {
     if (parent.type === typeName && parent.tag === tag) {
       if (parent.lines && token.map) parent.lines.push(...token.map);
       return nodes.pop();
@@ -145,7 +141,7 @@ function handleToken(
   }
 
   const attrs = handleAttrs(token, typeName);
-  const node = new Node(typeName, attrs, undefined, tag || undefined);
+  const node = new Node(typeName as NodeType, attrs, undefined, tag || undefined);
   const { position = {} } = token;
 
   node.errors = errors;
@@ -166,18 +162,13 @@ function handleToken(
 
   if (inlineParent) node.inline = true;
 
-  if (attributes && ['tag', 'fence', 'image'].includes(typeName))
-    annotate(node, attributes);
+  if (attributes && ['tag', 'fence', 'image'].includes(typeName)) annotate(node, attributes);
 
-  if (
-    handleSlots &&
-    tag === 'slot' &&
-    typeof node.attributes.primary === 'string'
-  )
+  if (handleSlots && tag === 'slot' && typeof node.attributes.primary === 'string')
     parent.slots[node.attributes.primary] = node;
   else parent.push(node);
 
-  if (token.nesting > 0) nodes.push(node);
+  if ((token.nesting || 0) > 0) nodes.push(node);
 
   if (!Array.isArray(token.children)) return;
 
@@ -194,14 +185,13 @@ function handleToken(
   nodes.pop();
 }
 
-export default function parser(tokens: Token[], args?: string | ParserArgs) {
+export default function parser(tokens: ParserToken[], args?: string | ParserArgs) {
   const doc = new Node('document');
   const nodes = [doc];
 
   if (typeof args === 'string') args = { file: args };
 
-  for (const token of tokens)
-    handleToken(token, nodes, args?.file, args?.slots, args?.location);
+  for (const token of tokens) handleToken(token, nodes, args?.file, args?.slots, args?.location);
 
   if (nodes.length > 1)
     for (const node of nodes.slice(1))

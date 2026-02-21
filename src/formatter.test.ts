@@ -817,8 +817,7 @@ ${'`'.repeat(4)}
 >
 > with two paragraphs`;
 
-    const expected =
-      '> Blockquote {% class="test" %}\n> \n> with two paragraphs\n';
+    const expected = '> Blockquote {% class="test" %}\n> \n> with two paragraphs\n';
 
     check(source, expected);
     stable(expected);
@@ -831,7 +830,7 @@ ${'`'.repeat(4)}
         validAttribute: true,
       },
       [],
-      'tag'
+      'tag',
     );
 
     const expected = `{% tag validAttribute=true /%}`;

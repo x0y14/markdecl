@@ -73,8 +73,7 @@ describe('validate', function () {
         const example = '{% union-tag-1 foo=withUnion() bar=withUnion() /%}';
         expect(validate(example, schema)).toEqual([]);
 
-        const example2 =
-          '{% union-tag-1 foo=withUnion() bar=withUnion() baz=withUnion() /%}';
+        const example2 = '{% union-tag-1 foo=withUnion() bar=withUnion() baz=withUnion() /%}';
         expect(validate(example2, schema)).toDeepEqualSubset([
           {
             error: {
@@ -167,9 +166,7 @@ describe('validate', function () {
       });
 
       it('with a missing required parameter', function () {
-        expect(
-          validate('{% foo bar=requiredParam() /%}', schema)
-        ).toDeepEqualSubset([
+        expect(validate('{% foo bar=requiredParam() /%}', schema)).toDeepEqualSubset([
           {
             error: {
               id: 'parameter-missing-required',
@@ -181,9 +178,7 @@ describe('validate', function () {
 
       describe('accepts defined parameters', function () {
         it('with keyed parameter', function () {
-          expect(
-            validate('{% foo bar=qux(test="example") /%}', schema)
-          ).toEqual([]);
+          expect(validate('{% foo bar=qux(test="example") /%}', schema)).toEqual([]);
         });
       });
 
@@ -216,9 +211,7 @@ describe('validate', function () {
             },
           ]);
 
-          expect(
-            validate('{% foo bar=baz(1, test=2) /%}', schema)
-          ).toDeepEqualSubset([
+          expect(validate('{% foo bar=baz(1, test=2) /%}', schema)).toDeepEqualSubset([
             {
               type: 'tag',
               error: {
@@ -251,7 +244,7 @@ describe('validate', function () {
 bar
 {% /baz %}
       `,
-        config
+        config,
       );
       expect(block).toEqual([]);
     });
@@ -266,7 +259,7 @@ bar
 bar
 {% /foo %}
       `,
-        config
+        config,
       );
       expect(wrong[0]?.error.id).toEqual('tag-placement-invalid');
       expect(wrong[0]?.error.message).toContain('should be inline');
@@ -279,7 +272,7 @@ bar
 bar
 {% /bar %}
 `,
-        config
+        config,
       );
       expect(correct).toEqual([]);
       const wrong = validate(`this is inline {% bar %}bar{% /bar %}`, config);
@@ -303,8 +296,7 @@ bar
                       : [
                           {
                             id: 'attribute-should-be-greater-than-ten',
-                            message:
-                              'Attribute "bar" must have value greater than 10.',
+                            message: 'Attribute "bar" must have value greater than 10.',
                           },
                         ];
                   },
@@ -580,9 +572,7 @@ bar
       };
 
       const errs = validate(example, config);
-      expect(errs[0].error.message).toEqual(
-        "The value of 'bar.baz' must be less than five"
-      );
+      expect(errs[0].error.message).toEqual("The value of 'bar.baz' must be less than five");
     });
 
     it('custom attribute type', () => {
@@ -618,9 +608,7 @@ bar
       };
 
       const errs = validate(example, config);
-      expect(errs[0].error.message).toEqual(
-        "The value of 'bar.baz' must be less than five"
-      );
+      expect(errs[0].error.message).toEqual("The value of 'bar.baz' must be less than five");
     });
   });
 
@@ -694,12 +682,7 @@ bar
           bar: {
             validate(node, config) {
               const parents = config?.validation?.parents?.map((p) => p.type);
-              expect(parents).toDeepEqual([
-                'document',
-                'paragraph',
-                'inline',
-                'tag',
-              ]);
+              expect(parents).toDeepEqual(['document', 'paragraph', 'inline', 'tag']);
               return [];
             },
           },

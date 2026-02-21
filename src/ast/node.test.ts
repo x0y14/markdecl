@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* oxlint-disable typescript/ban-ts-comment */
 import markdoc from '../../index';
 import Node from './node';
 import Variable from './variable';
@@ -10,14 +10,10 @@ describe('Node object', function () {
     it('with a simple document', function () {
       const example = new Node('document', {}, [
         new Node('heading', { level: 1 }, [
-          new Node('inline', {}, [
-            new Node('text', { content: 'This is a heading' }),
-          ]),
+          new Node('inline', {}, [new Node('text', { content: 'This is a heading' })]),
         ]),
         new Node('paragraph', {}, [
-          new Node('inline', {}, [
-            new Node('text', { content: 'This is a paragraph' }),
-          ]),
+          new Node('inline', {}, [new Node('text', { content: 'This is a paragraph' })]),
         ]),
       ]);
 
@@ -85,9 +81,7 @@ describe('transform', function () {
   describe('built-in nodes', function () {
     it('a heading node', function () {
       const example = new Node('heading', { level: 1 }, [
-        new Node('inline', {}, [
-          new Node('text', { content: 'This is a heading' }),
-        ]),
+        new Node('inline', {}, [new Node('text', { content: 'This is a heading' })]),
       ]);
 
       const output = transform(example);
@@ -101,9 +95,7 @@ describe('transform', function () {
           content: 'test',
         });
         const output = transform(example);
-        expect(output).toDeepEqual(
-          new Tag('pre', { 'data-language': 'ruby' }, ['test'])
-        );
+        expect(output).toDeepEqual(new Tag('pre', { 'data-language': 'ruby' }, ['test']));
       });
     });
   });
@@ -160,7 +152,7 @@ describe('transform', function () {
         'tag',
         { bar: 'baz' },
         [new Node('inline', {}, [new Node('text', { content: 'test' })])],
-        'foo'
+        'foo',
       );
 
       const output = transform(example, { tags });
@@ -224,9 +216,7 @@ describe('transform', function () {
       };
 
       const output = transform(example, { nodes: { foo } });
-      expect(output).toDeepEqual(
-        new Tag('foo', { 'data-bar': 1, 'data-baz': 'test' })
-      );
+      expect(output).toDeepEqual(new Tag('foo', { 'data-bar': 1, 'data-baz': 'test' }));
     });
 
     it('with a non-rendered attribute', function () {
@@ -337,9 +327,7 @@ describe('transform', function () {
 
   describe('annotations', () => {
     it('multiple values should be ordered correctly', () => {
-      const example = markdoc.parse(
-        `\`\`\`js {% z=true y=2 x="1" %} \nContent\n\`\`\``
-      );
+      const example = markdoc.parse(`\`\`\`js {% z=true y=2 x="1" %} \nContent\n\`\`\``);
 
       const fence = example.children[0];
 

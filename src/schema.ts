@@ -29,7 +29,7 @@ export const heading: Schema = {
     return new Tag(
       `h${node.attributes['level']}`,
       node.transformAttributes(config),
-      node.transformChildren(config)
+      node.transformChildren(config),
     );
   },
 };
@@ -68,17 +68,7 @@ export const fence: Schema = {
 
 export const blockquote: Schema = {
   render: 'blockquote',
-  children: [
-    'heading',
-    'paragraph',
-    'image',
-    'table',
-    'tag',
-    'fence',
-    'blockquote',
-    'list',
-    'hr',
-  ],
+  children: ['heading', 'paragraph', 'image', 'table', 'tag', 'fence', 'blockquote', 'list', 'hr'],
 };
 
 export const item: Schema = {
@@ -108,7 +98,7 @@ export const list: Schema = {
     return new Tag(
       node.attributes.ordered ? 'ol' : 'ul',
       node.transformAttributes(config),
-      node.transformChildren(config)
+      node.transformChildren(config),
     );
   },
 };

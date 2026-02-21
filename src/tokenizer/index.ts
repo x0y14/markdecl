@@ -1,17 +1,17 @@
-import MarkdownIt from 'markdown-it/lib';
+import MarkdownIt, { type Options as MarkdownItOptions } from 'markdown-it/lib/index.mjs';
 import annotations from './plugins/annotations';
 import frontmatter from './plugins/frontmatter';
 import comments from './plugins/comments';
-import type Token from 'markdown-it/lib/token';
+import type Token from 'markdown-it/lib/token.mjs';
 
 export default class Tokenizer {
   private parser: MarkdownIt;
 
   constructor(
-    config: MarkdownIt.Options & {
+    config: MarkdownItOptions & {
       allowIndentation?: boolean;
       allowComments?: boolean;
-    } = {}
+    } = {},
   ) {
     this.parser = new MarkdownIt(config);
     this.parser.use(annotations, 'annotations', {});

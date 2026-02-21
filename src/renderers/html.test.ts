@@ -5,7 +5,7 @@ import Tag from '../tag';
 function tag(
   name: string,
   attributes: Record<string, any> = {},
-  children: RenderableTreeNode[] = []
+  children: RenderableTreeNode[] = [],
 ) {
   return new Tag(name, attributes, children);
 }
@@ -28,10 +28,7 @@ describe('HTML renderer', function () {
   });
 
   it('rendering parallel tags', function () {
-    const example = [
-      tag('p', undefined, ['foo']),
-      tag('p', undefined, ['bar']),
-    ];
+    const example = [tag('p', undefined, ['foo']), tag('p', undefined, ['bar'])];
 
     expect(render(example)).toEqual('<p>foo</p><p>bar</p>');
   });

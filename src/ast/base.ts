@@ -35,8 +35,7 @@ export function resolve(value: any, config: Config = {}): any {
 
   if (Array.isArray(value)) return value.map((item) => resolve(item, config));
 
-  if (isAst(value) && value?.resolve instanceof Function)
-    return value.resolve(config);
+  if (isAst(value) && value?.resolve instanceof Function) return value.resolve(config);
 
   if (Object.getPrototypeOf(value) !== Object.prototype) return value;
 
