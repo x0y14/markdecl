@@ -6,6 +6,6 @@
 
 - [x] Reactサポートの廃止
 - [ ] 生成物がarticleで囲まれるのを設定で変えられるようにする
-- [ ] classやidなどの自動挿入を消す
+- [x] classやidなどの自動挿入を消す、ショートハンド構文も消す
 - [ ] functionのサポートを消す
 - [ ] frontmatterのサポートをyamlだけにする
