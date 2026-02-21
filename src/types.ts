@@ -171,3 +171,26 @@ export type ParserArgs = {
   slots?: boolean;
   location?: boolean;
 };
+
+export type ParserToken = {
+  type: string;
+  tag?: string;
+  attrs?: [string, string][] | null;
+  map?: [number, number] | null;
+  nesting?: 1 | 0 | -1;
+  level?: number;
+  content?: string;
+  markup?: string;
+  info?: string;
+  block?: boolean;
+  hidden?: boolean;
+  meta?: any;
+  errors?: ValidationError[];
+  position?: {
+    start?: number;
+    end?: number;
+  };
+  start?: number;
+  end?: number;
+  children?: ParserToken[] | null;
+};

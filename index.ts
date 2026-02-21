@@ -15,7 +15,7 @@ import { parseTags } from './src/utils';
 import validator, { validateTree } from './src/validator';
 
 import type { ParserArgs } from './src/types';
-import type Token from 'markdown-it/lib/token';
+import type Token from 'markdown-it/lib/token.mjs';
 import type { Config, RenderableTreeNode, ValidateError } from './src/types';
 
 export * from './src/types';

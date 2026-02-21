@@ -1,8 +1,8 @@
-import { Delimiter } from 'markdown-it/lib/rules_inline/state_inline';
+import { Delimiter } from 'markdown-it/lib/rules_inline/state_inline.mjs';
 import type { ValidationError } from './src/types';
 
-declare module 'markdown-it/lib/token' {
-  export default class Token extends require('markdown-it/lib/token') {
+declare module 'markdown-it/lib/token.mjs' {
+  interface Token {
     errors?: ValidationError[];
     position?: {
       start?: number;
@@ -11,8 +11,8 @@ declare module 'markdown-it/lib/token' {
   }
 }
 
-declare module 'markdown-it/lib/rules_block/state_block' {
-  export default class Token extends require('markdown-it/lib/rules_block/state_block') {
+declare module 'markdown-it/lib/rules_block/state_block.mjs' {
+  interface StateBlock {
     delimiters?: Delimiter[];
   }
 }

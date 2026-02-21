@@ -1,5 +1,5 @@
-import type MarkdownIt from 'markdown-it/lib';
-import type StateBlock from 'markdown-it/lib/rules_block/state_block';
+import type MarkdownIt from 'markdown-it/lib/index.mjs';
+import type StateBlock from 'markdown-it/lib/rules_block/state_block.mjs';
 
 const fence = '---';
 

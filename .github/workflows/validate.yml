@@ -25,4 +25,4 @@ jobs:
           pnpm run lint
           pnpm run type:check
           pnpm run test
-          pnpm run marktest
+          pnpm pack --dry-run

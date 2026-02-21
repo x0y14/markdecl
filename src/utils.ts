@@ -2,7 +2,7 @@ import { parse, SyntaxError } from './grammar/tag';
 import Variable from './ast/variable';
 import Function from './ast/function';
 
-import type Token from 'markdown-it/lib/token';
+import type { ParserToken } from './types';
 
 enum STATES {
   normal,
@@ -69,7 +69,7 @@ function parseTag(content: string, line: number, contentStart: number) {
   }
 }
 
-export function parseTags(content: string, firstLine = 0): Token[] {
+export function parseTags(content: string, firstLine = 0): ParserToken[] {
   let line = firstLine + 1;
   const output = [];
   let start = 0;
@@ -109,7 +109,7 @@ export function parseTags(content: string, firstLine = 0): Token[] {
     });
 
     output.push({
-      map: [line, line + 1],
+      map: [line, line + 1] as [number, number],
       position: {
         start: pos - lineStart,
         end: pos - lineStart + text.length,

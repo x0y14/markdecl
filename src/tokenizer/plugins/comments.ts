@@ -1,6 +1,6 @@
-import type MarkdownIt from 'markdown-it/lib';
-import type StateBlock from 'markdown-it/lib/rules_block/state_block';
-import type StateInline from 'markdown-it/lib/rules_inline/state_inline';
+import type MarkdownIt from 'markdown-it/lib/index.mjs';
+import type StateBlock from 'markdown-it/lib/rules_block/state_block.mjs';
+import type StateInline from 'markdown-it/lib/rules_inline/state_inline.mjs';
 
 const OPEN = '<!--';
 const CLOSE = '-->';
