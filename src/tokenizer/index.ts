@@ -11,7 +11,7 @@ export default class Tokenizer {
     config: MarkdownItOptions & {
       allowIndentation?: boolean;
       allowComments?: boolean;
-    } = {}
+    } = {},
   ) {
     this.parser = new MarkdownIt(config);
     this.parser.use(annotations, 'annotations', {});

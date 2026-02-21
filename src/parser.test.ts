@@ -114,8 +114,7 @@ describe('Markdown parser', function () {
 
   describe('handling attributes', function () {
     it('for emphasis', function () {
-      const items = (doc, n = 0) =>
-        doc.children[0].children[0].children[n].attributes.marker;
+      const items = (doc, n = 0) => doc.children[0].children[0].children[n].attributes.marker;
 
       const example1 = convert(`a*b*c`);
       expect(items(example1, 1)).toEqual('*');
@@ -304,9 +303,7 @@ describe('Markdown parser', function () {
           children: [
             {
               type: 'inline',
-              children: [
-                { type: 'text', attributes: { content: 'Sample Heading' } },
-              ],
+              children: [{ type: 'text', attributes: { content: 'Sample Heading' } }],
             },
           ],
         },
@@ -372,9 +369,7 @@ describe('Markdown parser', function () {
                 children: [
                   {
                     type: 'inline',
-                    children: [
-                      { type: 'text', attributes: { content: 'foo' } },
-                    ],
+                    children: [{ type: 'text', attributes: { content: 'foo' } }],
                   },
                 ],
               },
@@ -383,9 +378,7 @@ describe('Markdown parser', function () {
                 children: [
                   {
                     type: 'inline',
-                    children: [
-                      { type: 'text', attributes: { content: 'bar' } },
-                    ],
+                    children: [{ type: 'text', attributes: { content: 'bar' } }],
                   },
                 ],
               },
@@ -413,9 +406,7 @@ describe('Markdown parser', function () {
                 children: [
                   {
                     type: 'inline',
-                    children: [
-                      { type: 'text', attributes: { content: 'foo' } },
-                    ],
+                    children: [{ type: 'text', attributes: { content: 'foo' } }],
                   },
                 ],
               },
@@ -424,9 +415,7 @@ describe('Markdown parser', function () {
                 children: [
                   {
                     type: 'inline',
-                    children: [
-                      { type: 'text', attributes: { content: 'bar' } },
-                    ],
+                    children: [{ type: 'text', attributes: { content: 'bar' } }],
                   },
                 ],
               },
@@ -664,10 +653,7 @@ describe('Markdown parser', function () {
 
     expect(example).toDeepEqualSubset({
       type: 'document',
-      children: [
-        { type: 'paragraph' },
-        { type: 'comment', attributes: { content: 'foo' } },
-      ],
+      children: [{ type: 'paragraph' }, { type: 'comment', attributes: { content: 'foo' } }],
     });
   });
 

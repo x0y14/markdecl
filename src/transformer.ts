@@ -49,8 +49,8 @@ export default {
   },
 
   children(node: Node, config: Config = {}) {
-    const children = node.children.flatMap<MaybePromise<RenderableTreeNodes>>(
-      (child) => this.node(child, config)
+    const children = node.children.flatMap<MaybePromise<RenderableTreeNodes>>((child) =>
+      this.node(child, config),
     );
     if (children.some(isPromise)) {
       return Promise.all(children);
@@ -60,8 +60,7 @@ export default {
 
   node(node: Node, config: Config = {}) {
     const schema = this.findSchema(node, config) ?? {};
-    if (schema && schema.transform instanceof Function)
-      return schema.transform(node, config);
+    if (schema && schema.transform instanceof Function) return schema.transform(node, config);
 
     const children = this.children(node, config);
     if (!schema || !schema.render) return children;
@@ -70,7 +69,7 @@ export default {
 
     if (isPromise(attributes) || isPromise(children)) {
       return Promise.all([attributes, children]).then(
-        (values) => new Tag(schema.render, ...values)
+        (values) => new Tag(schema.render, ...values),
       );
     }
 

@@ -3,8 +3,7 @@ import { findTagEnd, parseTags } from '../src/utils';
 describe('Templating', function () {
   describe('parseTags', function () {
     it('simple example', function () {
-      const example =
-        'this is a {% foo blah="asdf" %}test{% /foo %} of template parsing';
+      const example = 'this is a {% foo blah="asdf" %}test{% /foo %} of template parsing';
       const output = parseTags(example);
       const expected = [
         { type: 'text', content: 'this is a ', start: 0, end: 9 },
@@ -80,7 +79,7 @@ describe('Templating', function () {
 
       it('in a complex container', function () {
         const end = findTagEnd(
-          '{% #foo .bar .baz test="this} is \\"{test}\\" a test" %} this is a test'
+          '{% #foo .bar .baz test="this} is \\"{test}\\" a test" %} this is a test',
         );
         expect(end).toEqual(52);
       });

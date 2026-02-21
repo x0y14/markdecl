@@ -5,12 +5,7 @@ import type StateInline from 'markdown-it/lib/rules_inline/state_inline.mjs';
 const OPEN = '<!--';
 const CLOSE = '-->';
 
-function block(
-  state: StateBlock,
-  startLine: number,
-  endLine: number,
-  silent: boolean
-): boolean {
+function block(state: StateBlock, startLine: number, endLine: number, silent: boolean): boolean {
   const start = state.bMarks[startLine] + state.tShift[startLine];
   if (!state.src.startsWith(OPEN, start)) return false;
 

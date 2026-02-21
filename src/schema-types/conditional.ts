@@ -1,8 +1,4 @@
-import {
-  Config,
-  CustomAttributeTypeInterface,
-  ValidationError,
-} from '../types';
+import { Config, CustomAttributeTypeInterface, ValidationError } from '../types';
 
 /**
  * Conditional attribute type for Markdoc {% if /%} and {% else /%} tags.

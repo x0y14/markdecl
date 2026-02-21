@@ -227,9 +227,7 @@ describe('MarkdownIt Annotations plugin', function () {
       });
 
       it('with two in succession', function () {
-        const example = parse(
-          'Example {% foo %}bar{% /foo %}{% test %}test{% /test %} baz'
-        );
+        const example = parse('Example {% foo %}bar{% /foo %}{% test %}test{% /test %} baz');
         expect(example).toDeepEqualSubset([
           { type: 'paragraph_open' },
           {
@@ -270,9 +268,7 @@ describe('MarkdownIt Annotations plugin', function () {
       });
 
       it('with markdown inside', function () {
-        const example = parse(
-          'Example {% foo %}this is a *test*{% /foo %} baz'
-        );
+        const example = parse('Example {% foo %}this is a *test*{% /foo %} baz');
         expect(example).toDeepEqualSubset([
           { type: 'paragraph_open' },
           {
@@ -366,9 +362,7 @@ describe('MarkdownIt Annotations plugin', function () {
 
   describe('parsing inline annotations', function () {
     it('with a header', function () {
-      const example = parse(
-        '# This is a test {% id="foo" bar=true baz=true %}'
-      );
+      const example = parse('# This is a test {% id="foo" bar=true baz=true %}');
       expect(example).toDeepEqualSubset([
         { type: 'heading_open' },
         {
@@ -393,9 +387,7 @@ describe('MarkdownIt Annotations plugin', function () {
     });
 
     it('with a header and keys', function () {
-      const example = parse(
-        '# This is a test {% id="foo" bar=true baz=true foo=2 %}'
-      );
+      const example = parse('# This is a test {% id="foo" bar=true baz=true foo=2 %}');
       expect(example).toDeepEqualSubset([
         { type: 'heading_open' },
         {

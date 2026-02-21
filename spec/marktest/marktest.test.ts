@@ -40,9 +40,7 @@ function parse(content: string, slots?: boolean, file?: string) {
 
 function stripLines(object: MarktestCase) {
   return JSON.parse(
-    JSON.stringify(object, (key, value) =>
-      key === '$$lines' ? undefined : value
-    )
+    JSON.stringify(object, (key, value) => (key === '$$lines' ? undefined : value)),
   ) as MarktestCase;
 }
 
@@ -78,19 +76,12 @@ function formatValidation(path: string, test: MarktestCase, validation: any[]) {
   } of validation)
     output += `${errorLines ? errorLines[0] : '?'}:${message}\n`;
 
-  return [
-    `INVALID: ${path}:${lines?.start ?? '?'}`,
-    test.name,
-    test.code ?? '',
-    output,
-  ].join('\n\n');
+  return [`INVALID: ${path}:${lines?.start ?? '?'}`, test.name, test.code ?? '', output].join(
+    '\n\n',
+  );
 }
 
-function formatDiff(
-  path: string,
-  test: MarktestCase,
-  diff: ReturnType<typeof diffChars>
-) {
+function formatDiff(path: string, test: MarktestCase, diff: ReturnType<typeof diffChars>) {
   const lines = test.$$lines;
   const prettyDiff = diff
     .flatMap((part) => [
@@ -99,19 +90,13 @@ function formatDiff(
     ])
     .join('');
 
-  return [
-    `FAILED: ${path}:${lines?.start ?? '?'}`,
-    test.name,
-    test.code ?? '',
-    prettyDiff,
-  ].join('\n\n');
+  return [`FAILED: ${path}:${lines?.start ?? '?'}`, test.name, test.code ?? '', prettyDiff].join(
+    '\n\n',
+  );
 }
 
 const testsPath = resolve(process.cwd(), 'spec/marktest/tests.yaml');
-const tests = yaml.load(
-  readFileSync(testsPath, 'utf8'),
-  Loader
-) as MarktestCase[];
+const tests = yaml.load(readFileSync(testsPath, 'utf8'), Loader) as MarktestCase[];
 
 describe('marktest suite', () => {
   for (const testCase of tests) {

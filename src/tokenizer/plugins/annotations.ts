@@ -14,7 +14,7 @@ import { OPEN, CLOSE } from '../../utils';
 function createToken(
   state: StateBlock | StateInline,
   content: string,
-  contentStart?: number
+  contentStart?: number,
 ): ParserToken {
   try {
     const { type, meta, nesting = 0 } = parse(content, { Variable, Function });
@@ -47,12 +47,7 @@ function createToken(
   }
 }
 
-function block(
-  state: StateBlock,
-  startLine: number,
-  endLine: number,
-  silent: boolean
-): boolean {
+function block(state: StateBlock, startLine: number, endLine: number, silent: boolean): boolean {
   const start = state.bMarks[startLine] + state.tShift[startLine];
   const finish = state.eMarks[startLine];
 
@@ -65,9 +60,7 @@ function block(
 
   const contentStart = start + OPEN.length;
   const content = state.src.slice(contentStart, tagEnd).trim();
-  const lines = state.src
-    .slice(start, tagEnd + CLOSE.length)
-    .split('\n').length;
+  const lines = state.src.slice(start, tagEnd + CLOSE.length).split('\n').length;
 
   if (content[0] === '$') return false;
 
@@ -113,16 +106,14 @@ function core(state: StateCore) {
         token.errors.push({
           id: 'fence-tag-error',
           level: 'error',
-          message: `Syntax error in fence tag: ${
-            (error as SyntaxError).message
-          }`,
+          message: `Syntax error in fence tag: ${(error as SyntaxError).message}`,
         });
       }
     }
 
     if (
       token?.meta?.attributes?.find(
-        (attr: AttributeValue) => attr.name === 'process' && !attr.value
+        (attr: AttributeValue) => attr.name === 'process' && !attr.value,
       )
     )
       continue;

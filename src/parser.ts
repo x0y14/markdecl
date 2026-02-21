@@ -2,12 +2,7 @@ import Node from './ast/node';
 import transforms from './transforms/index';
 import { OPEN } from './utils';
 
-import type {
-  AttributeValue,
-  NodeType,
-  ParserArgs,
-  ParserToken,
-} from './types';
+import type { AttributeValue, NodeType, ParserArgs, ParserToken } from './types';
 
 const mappings: Record<string, string> = {
   ordered_list: 'list',
@@ -47,9 +42,7 @@ function handleAttrs(token: ParserToken, type: string) {
     }
     case 'link': {
       const attrs = Object.fromEntries(token.attrs || []);
-      return attrs.title
-        ? { href: attrs.href, title: attrs.title }
-        : { href: attrs.href };
+      return attrs.title ? { href: attrs.href, title: attrs.title } : { href: attrs.href };
     }
     case 'image': {
       const attrs = Object.fromEntries(token.attrs || []);
@@ -103,15 +96,14 @@ function handleToken(
   file?: string,
   handleSlots?: boolean,
   addLocation?: boolean,
-  inlineParent?: Node
+  inlineParent?: Node,
 ) {
   if (token.type === 'frontmatter') {
     nodes[0].attributes.frontmatter = token.content;
     return;
   }
 
-  if (token.hidden || (token.type === 'text' && (token.content || '') === ''))
-    return;
+  if (token.hidden || (token.type === 'text' && (token.content || '') === '')) return;
 
   const errors = token.errors || [];
   const parent = nodes[nodes.length - 1];
@@ -149,12 +141,7 @@ function handleToken(
   }
 
   const attrs = handleAttrs(token, typeName);
-  const node = new Node(
-    typeName as NodeType,
-    attrs,
-    undefined,
-    tag || undefined
-  );
+  const node = new Node(typeName as NodeType, attrs, undefined, tag || undefined);
   const { position = {} } = token;
 
   node.errors = errors;
@@ -175,14 +162,9 @@ function handleToken(
 
   if (inlineParent) node.inline = true;
 
-  if (attributes && ['tag', 'fence', 'image'].includes(typeName))
-    annotate(node, attributes);
+  if (attributes && ['tag', 'fence', 'image'].includes(typeName)) annotate(node, attributes);
 
-  if (
-    handleSlots &&
-    tag === 'slot' &&
-    typeof node.attributes.primary === 'string'
-  )
+  if (handleSlots && tag === 'slot' && typeof node.attributes.primary === 'string')
     parent.slots[node.attributes.primary] = node;
   else parent.push(node);
 
@@ -203,17 +185,13 @@ function handleToken(
   nodes.pop();
 }
 
-export default function parser(
-  tokens: ParserToken[],
-  args?: string | ParserArgs
-) {
+export default function parser(tokens: ParserToken[], args?: string | ParserArgs) {
   const doc = new Node('document');
   const nodes = [doc];
 
   if (typeof args === 'string') args = { file: args };
 
-  for (const token of tokens)
-    handleToken(token, nodes, args?.file, args?.slots, args?.location);
+  for (const token of tokens) handleToken(token, nodes, args?.file, args?.slots, args?.location);
 
   if (nodes.length > 1)
     for (const node of nodes.slice(1))

@@ -44,8 +44,6 @@ export const partial: Schema = {
     const transformChildren = (part: Node) =>
       part.resolve(scopedConfig).transformChildren(scopedConfig);
 
-    return Array.isArray(partial)
-      ? partial.flatMap(transformChildren)
-      : transformChildren(partial);
+    return Array.isArray(partial) ? partial.flatMap(transformChildren) : transformChildren(partial);
   },
 };

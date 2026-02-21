@@ -57,10 +57,7 @@ function formatScalar(v: Value): string | undefined {
     return (
       '{' +
       Object.entries(v)
-        .map(
-          ([key, value]) =>
-            `${isIdentifier(key) ? key : `"${key}"`}: ${formatScalar(value)}`
-        )
+        .map(([key, value]) => `${isIdentifier(key) ? key : `"${key}"`}: ${formatScalar(value)}`)
         .join(SEP) +
       '}'
     );
@@ -240,9 +237,7 @@ function* formatNode(n: Node, o: Options = {}) {
 
       const innerFence = n.attributes.content.match(/`{3,}/g) || [];
 
-      const innerFenceLength = innerFence
-        .map((s: string) => s.length)
-        .reduce(max, 0);
+      const innerFenceLength = innerFence.map((s: string) => s.length).reduce(max, 0);
 
       const boundary = '`'.repeat(innerFenceLength ? innerFenceLength + 1 : 3);
       const needsNlBeforeEndBoundary = !n.attributes.content.endsWith(NL);
@@ -267,23 +262,22 @@ function* formatNode(n: Node, o: Options = {}) {
         yield indent;
       }
       const open = OPEN + SPACE;
-      const attributes = [...formatAttributes(n)].filter(
-        (v) => v !== undefined
-      );
+      const attributes = [...formatAttributes(n)].filter((v) => v !== undefined);
       const tag = [open + n.tag, ...attributes];
       const inlineTag = tag.join(SPACE);
 
       const isLongTagOpening =
-        inlineTag.length + open.length * 2 >
-        (o.maxTagOpeningWidth || MAX_TAG_OPENING_WIDTH);
+        inlineTag.length + open.length * 2 > (o.maxTagOpeningWidth || MAX_TAG_OPENING_WIDTH);
 
       // {% tag attributes={...} %}
-      yield (!n.inline && isLongTagOpening
-        ? tag.join(NL + SPACE.repeat(open.length) + indent)
-        : inlineTag) +
-        SPACE +
-        (n.children.length ? '' : '/') +
-        CLOSE;
+      yield (
+        (!n.inline && isLongTagOpening
+          ? tag.join(NL + SPACE.repeat(open.length) + indent)
+          : inlineTag) +
+          SPACE +
+          (n.children.length ? '' : '/') +
+          CLOSE
+      );
 
       if (n.children.length) {
         yield* formatChildren(n, no.allowIndentation ? increment(no) : no);
@@ -299,9 +293,7 @@ function* formatNode(n: Node, o: Options = {}) {
       break;
     }
     case 'list': {
-      const isLoose = n.children.some((n) =>
-        n.children.some((c) => c.type === 'paragraph')
-      );
+      const isLoose = n.children.some((n) => n.children.some((c) => c.type === 'paragraph'));
 
       for (let i = 0; i < n.children.length; i++) {
         const prefix = (() => {
@@ -397,25 +389,19 @@ function* formatNode(n: Node, o: Options = {}) {
 
         for (const row of table) {
           for (let i = 0; i < row.length; i++) {
-            widths[i] = widths[i]
-              ? Math.max(widths[i], row[i].length)
-              : row[i].length;
+            widths[i] = widths[i] ? Math.max(widths[i], row[i].length) : row[i].length;
           }
         }
 
         const [head, ...rows] = table as string[][];
 
         yield NL;
-        yield* formatTableRow(
-          head.map((cell, i) => cell + SPACE.repeat(widths[i] - cell.length))
-        );
+        yield* formatTableRow(head.map((cell, i) => cell + SPACE.repeat(widths[i] - cell.length)));
         yield NL;
         yield* formatTableRow(head.map((cell, i) => '-'.repeat(widths[i])));
         yield NL;
         for (const row of rows) {
-          yield* formatTableRow(
-            row.map((cell, i) => cell + SPACE.repeat(widths[i] - cell.length))
-          );
+          yield* formatTableRow(row.map((cell, i) => cell + SPACE.repeat(widths[i] - cell.length)));
           yield NL;
         }
       }
@@ -449,10 +435,7 @@ function* formatNode(n: Node, o: Options = {}) {
   }
 }
 
-function* formatValue(
-  v: Value | Value[],
-  o: Options = {}
-): Generator<string, void, unknown> {
+function* formatValue(v: Value | Value[], o: Options = {}): Generator<string, void, unknown> {
   switch (typeof v) {
     case 'undefined':
       break;

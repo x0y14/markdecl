@@ -117,18 +117,14 @@ describe('Markdoc tag parser', function () {
     });
 
     it('with an invalid namespace', function () {
-      expect(() => parse('$.foo:bar.baz', { Variable })).toThrowError(
-        SyntaxError
-      );
+      expect(() => parse('$.foo:bar.baz', { Variable })).toThrowError(SyntaxError);
     });
   });
 
   describe('parsing attributes', function () {
     it('parsing annotation with a single attribute', function () {
       const example = parse('test=1');
-      expect(example.meta.attributes).toDeepEqual([
-        { type: 'attribute', name: 'test', value: 1 },
-      ]);
+      expect(example.meta.attributes).toDeepEqual([{ type: 'attribute', name: 'test', value: 1 }]);
     });
 
     it('with id shortcut rejected', function () {
@@ -149,9 +145,7 @@ describe('Markdoc tag parser', function () {
     });
 
     it('with shortcuts and key/value pairs rejected', function () {
-      expect(() => parse('#foo .bar test="asdf"', { Variable })).toThrowError(
-        SyntaxError
-      );
+      expect(() => parse('#foo .bar test="asdf"', { Variable })).toThrowError(SyntaxError);
     });
 
     it('with boolean key/value pairs', function () {
@@ -227,9 +221,7 @@ describe('Markdoc tag parser', function () {
       });
 
       it('with an invalid array index', function () {
-        expect(() => parse('test=$foo[asdf]', { Variable })).toThrowError(
-          SyntaxError
-        );
+        expect(() => parse('test=$foo[asdf]', { Variable })).toThrowError(SyntaxError);
       });
     });
 
@@ -242,9 +234,7 @@ describe('Markdoc tag parser', function () {
       });
 
       it('with a nested hash literal value', function () {
-        const example1 = parse(
-          'foo={bar: true, baz: {test: "this is a test"}}'
-        );
+        const example1 = parse('foo={bar: true, baz: {test: "this is a test"}}');
         const example2 = parse('foo={bar:true,baz:{test:"this is a test"}}');
         const expected = [
           {
@@ -326,8 +316,7 @@ describe('Markdoc tag parser', function () {
 
     it('with an invalid value', function () {
       const examples = ['foo=bar', 'foo=a1', 'foo=1a'];
-      for (const example of examples)
-        expect(() => parse(example)).toThrowError(SyntaxError);
+      for (const example of examples) expect(() => parse(example)).toThrowError(SyntaxError);
     });
   });
 });

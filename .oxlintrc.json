@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "ignorePatterns": ["dist/**", "src/grammar/tag.js"],
+  "rules": {
+    "no-redeclare": "off",
+    "prefer-const": ["error", { "destructuring": "all" }],
+    "typescript/no-explicit-any": "off",
+    "typescript/no-redeclare": "error",
+    "typescript/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }]
+  }
+}

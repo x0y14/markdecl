@@ -8,16 +8,10 @@ function getLine(state: StateBlock, n: number) {
 }
 
 function findClose(state: StateBlock, endLine: number) {
-  for (let line = 1; line < endLine; line++)
-    if (getLine(state, line) === fence) return line;
+  for (let line = 1; line < endLine; line++) if (getLine(state, line) === fence) return line;
 }
 
-function block(
-  state: StateBlock,
-  startLine: number,
-  endLine: number,
-  silent: boolean
-): boolean {
+function block(state: StateBlock, startLine: number, endLine: number, silent: boolean): boolean {
   if (startLine != 0 || getLine(state, 0) != fence) return false;
 
   const close = findClose(state, endLine);
