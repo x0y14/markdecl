@@ -1,4 +1,4 @@
-# Markdecl
+# strictmdoc
 
 [markdoc](https://github.com/markdoc/markdoc)のフォーク.
 

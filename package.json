@@ -1,7 +1,7 @@
 {
-  "name": "markdecl",
+  "name": "strictmdoc",
   "author": "Yuhei Yamauchi",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "fork of markdoc",
   "type": "module",
   "types": "dist/index.d.ts",
